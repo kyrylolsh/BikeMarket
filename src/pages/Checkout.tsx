@@ -49,8 +49,16 @@ export default function Checkout() {
 
     try {
       await orderService.create({
+        buyerId: user?.uid ?? "",
+
+        name: form.name,
+        phone: form.phone,
         email: form.email,
+        address: form.address,
+        payment: form.payment,
+
         items: cart,
+
         total,
       });
 

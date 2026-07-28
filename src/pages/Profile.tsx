@@ -89,6 +89,13 @@ export default function Profile() {
             ➕ Продати велосипед
           </Link>
 
+        <Link
+          to="/seller-orders"
+          className="rounded-xl bg-orange-600 px-6 py-4 text-center font-bold text-white hover:bg-orange-700"
+        >
+          📦 Замовлення клієнтів
+        </Link>
+
           <Link
             to="/messages"
             className="rounded-xl bg-indigo-600 px-6 py-4 text-center font-bold text-white transition hover:bg-indigo-700"

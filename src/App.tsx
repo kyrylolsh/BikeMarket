@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import SellerOrders from "./pages/SellerOrders";
 import Sell from "./pages/Sell";
 import MyListings from "./pages/MyListings";
 import NotFound from "./pages/NotFound";
@@ -24,17 +25,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route element={<MainLayout />}>
-
-        <Route
-          path="/messages"
-          element={<Messages />}
-        />
-
-        <Route
-          path="/chat/:id"
-          element={<Chat />}
-        />
 
           <Route path="/" element={<Home />} />
 
@@ -57,7 +49,15 @@ function App() {
             element={<Profile />}
           />
 
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/messages"
+            element={<Messages />}
+          />
+
+          <Route
+            path="/chat/:id"
+            element={<Chat />}
+          />
 
           <Route
             path="/checkout"
@@ -69,7 +69,15 @@ function App() {
             element={<Orders />}
           />
 
-          <Route path="/sell" element={<Sell />} />
+          <Route
+            path="/seller-orders"
+            element={<SellerOrders />}
+          />
+
+          <Route
+            path="/sell"
+            element={<Sell />}
+          />
 
           <Route
             path="/my-listings"
@@ -81,9 +89,17 @@ function App() {
             element={<SellerProfile />}
           />
 
+          <Route
+            path="/admin"
+            element={<Admin />}
+          />
+
         </Route>
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
         <Route
           path="/register"
