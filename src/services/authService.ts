@@ -2,9 +2,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { auth } from "../firebase";
+
+const googleProvider = new GoogleAuthProvider();
 
 export const authService = {
   register(email: string, password: string) {
@@ -21,6 +25,10 @@ export const authService = {
       email,
       password
     );
+  },
+
+  loginWithGoogle() {
+    return signInWithPopup(auth, googleProvider);
   },
 
   logout() {

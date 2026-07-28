@@ -26,6 +26,18 @@ export default function Login() {
     }
   }
 
+  async function handleGoogleLogin() {
+    try {
+      await authService.loginWithGoogle();
+
+      toast.success("Вхід через Google успішний!");
+
+      navigate("/");
+    } catch {
+      toast.error("Не вдалося увійти через Google");
+    }
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form
@@ -58,6 +70,14 @@ export default function Login() {
           className="w-full rounded-xl bg-green-600 py-3 font-bold text-white hover:bg-green-700"
         >
           Увійти
+        </button>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="mt-4 w-full rounded-xl border border-gray-300 bg-white py-3 font-bold text-gray-700 transition hover:bg-gray-100"
+        >
+          🔵 Увійти через Google
         </button>
 
         <p className="mt-6 text-center">

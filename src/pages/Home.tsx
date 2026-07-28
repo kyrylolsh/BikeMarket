@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom";
-
 import ProductCard from "../components/ProductCard/ProductCard";
-import CategoryCard from "../components/CategoryCard/CategoryCard";
-
 import { useProducts } from "../hooks/useProducts";
 import Loader from "../components/Loader/Loader";
-import { categories } from "../data/categories";
 
 export default function Home() {
     const { products, loading } = useProducts();
@@ -26,7 +22,7 @@ export default function Home() {
         </h1>
 
         <p className="mt-6 max-w-2xl text-xl">
-          Найкращий магазин велосипедів в Україні.
+          Найкращий маркетплейс велотоварів в Україні.
           MTB, Road, BMX та електровелосипеди.
         </p>
 
@@ -39,34 +35,14 @@ export default function Home() {
 
       </section>
 
-      {/* Categories */}
 
-      <section className="mt-20">
-
-        <h2 className="mb-8 text-4xl font-bold">
-          Категорії
-        </h2>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              title={category.title}
-              emoji={category.emoji}
-            />
-          ))}
-
-        </div>
-
-      </section>
 
       {/* Products */}
 
       <section className="mt-20">
 
         <h2 className="mb-8 text-4xl font-bold">
-          Популярні велосипеди
+          Популярні оголошення
         </h2>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
