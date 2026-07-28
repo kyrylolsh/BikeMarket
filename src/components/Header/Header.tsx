@@ -1,5 +1,10 @@
 import { Link, NavLink } from "react-router-dom";
-import { FiHeart, FiShoppingCart } from "react-icons/fi";
+import {
+  FiHeart,
+  FiShoppingCart,
+  FiUser,
+  FiPlusCircle,
+} from "react-icons/fi";
 import toast from "react-hot-toast";
 
 import SearchBar from "../SearchBar/SearchBar";
@@ -18,8 +23,6 @@ export default function Header() {
     0
   );
 
-  const favoritesCount = favorites.length;
-
   async function handleLogout() {
     try {
       await logout();
@@ -30,116 +33,132 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-6 px-6">
+
+        {/* Logo */}
 
         <Link
           to="/"
-          className="text-3xl font-extrabold text-green-600"
+          className="whitespace-nowrap text-3xl font-extrabold text-green-600"
         >
           🚴 BikeMarket
         </Link>
 
-        <div className="hidden md:block">
+        {/* Search */}
+
+        <div className="flex-1">
           <SearchBar />
         </div>
 
-        <nav className="flex items-center gap-6">
+        {/* Navigation */}
+
+        <nav className="hidden items-center gap-6 lg:flex">
 
           <NavLink
             to="/"
             className={({ isActive }) =>
               isActive
-                ? "font-bold text-green-600"
-                : "hover:text-green-600"
+                ? "font-semibold text-green-600"
+                : "text-gray-600 hover:text-green-600"
             }
           >
-            Home
+            Головна
           </NavLink>
 
           <NavLink
             to="/catalog"
             className={({ isActive }) =>
               isActive
-                ? "font-bold text-green-600"
-                : "hover:text-green-600"
+                ? "font-semibold text-green-600"
+                : "text-gray-600 hover:text-green-600"
             }
           >
-            Catalog
+            Каталог
           </NavLink>
-
-          <NavLink
-            to="/sell"
-            className={({ isActive }) =>
-              isActive
-                ? "font-bold text-green-600"
-                : "hover:text-green-600"
-            }
-          >
-            Sell
-          </NavLink>
-
-          <NavLink
-            to="/favorites"
-            className="relative"
-          >
-            <FiHeart size={22} />
-
-            {favoritesCount > 0 && (
-              <span className="absolute -right-3 -top-3 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                {favoritesCount}
-              </span>
-            )}
-          </NavLink>
-
-          <NavLink
-            to="/cart"
-            className="relative"
-          >
-            <FiShoppingCart size={22} />
-
-            {cartCount > 0 && (
-              <span className="absolute -right-3 -top-3 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs text-white">
-                {cartCount}
-              </span>
-            )}
-          </NavLink>
-
-          {user ? (
-            <>
-              <NavLink
-                to="/profile"
-                className="font-semibold text-green-600"
-              >
-                {user.email}
-              </NavLink>
-
-              <button
-                onClick={handleLogout}
-                className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-              >
-                Вийти
-              </button>
-            </>
-          ) : (
-            <>
-              <NavLink
-                to="/login"
-                className="hover:text-green-600"
-              >
-                Вхід
-              </NavLink>
-
-              <NavLink
-                to="/register"
-                className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-              >
-                Реєстрація
-              </NavLink>
-            </>
-          )}
 
         </nav>
+
+        {/* Sell button */}
+
+        <Link
+          to="/sell"
+          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700"
+        >
+          <FiPlusCircle />
+          Продати
+        </Link>
+
+        {/* Favorites */}
+
+        <NavLink
+          to="/favorites"
+          className="relative rounded-lg p-2 transition hover:bg-gray-100"
+        >
+          <FiHeart size={24} />
+
+          {favorites.length > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+              {favorites.length}
+            </span>
+          )}
+        </NavLink>
+
+        {/* Cart */}
+
+        <NavLink
+          to="/cart"
+          className="relative rounded-lg p-2 transition hover:bg-gray-100"
+        >
+          <FiShoppingCart size={24} />
+
+          {cartCount > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs text-white">
+              {cartCount}
+            </span>
+          )}
+        </NavLink>
+
+        {/* User */}
+
+        {user ? (
+          <div className="flex items-center gap-3">
+
+            <NavLink
+              to="/profile"
+              className="flex items-center gap-2 rounded-lg border px-4 py-2 hover:bg-gray-50"
+            >
+              <FiUser />
+              Профіль
+            </NavLink>
+
+            <button
+              onClick={handleLogout}
+              className="rounded-lg border border-red-500 px-4 py-2 text-red-500 transition hover:bg-red-500 hover:text-white"
+            >
+              Вийти
+            </button>
+
+          </div>
+        ) : (
+          <div className="flex gap-3">
+
+            <NavLink
+              to="/login"
+              className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+            >
+              Увійти
+            </NavLink>
+
+            <NavLink
+              to="/register"
+              className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+            >
+              Реєстрація
+            </NavLink>
+
+          </div>
+        )}
 
       </div>
     </header>

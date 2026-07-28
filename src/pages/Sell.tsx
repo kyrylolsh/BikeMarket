@@ -81,14 +81,16 @@ export default function Sell() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
+
       <h1 className="mb-10 text-4xl font-bold">
         🚲 Продати велосипед
       </h1>
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-4 rounded-2xl bg-white p-6 shadow"
+        className="grid gap-5 rounded-2xl bg-white p-8 shadow"
       >
+
         <input
           placeholder="Назва велосипеда"
           value={form.name}
@@ -101,8 +103,7 @@ export default function Sell() {
           className="rounded-xl border p-3"
         />
 
-        <input
-          placeholder="Бренд"
+        <select
           value={form.brand}
           onChange={(e) =>
             setForm({
@@ -111,10 +112,24 @@ export default function Sell() {
             })
           }
           className="rounded-xl border p-3"
-        />
+        >
+          <option value="">
+            Оберіть бренд
+          </option>
 
-        <input
-          placeholder="Категорія (MTB, Road, BMX...)"
+          <option>Trek</option>
+          <option>Specialized</option>
+          <option>Cannondale</option>
+          <option>Scott</option>
+          <option>Giant</option>
+          <option>Cube</option>
+          <option>Merida</option>
+          <option>Bianchi</option>
+          <option>Author</option>
+          <option>інші</option>
+        </select>
+
+        <select
           value={form.category}
           onChange={(e) =>
             setForm({
@@ -123,11 +138,21 @@ export default function Sell() {
             })
           }
           className="rounded-xl border p-3"
-        />
+        >
+          <option value="">
+            Оберіть тип велосипеда
+          </option>
+
+          <option>MTB</option>
+          <option>Road</option>
+          <option>Mountain</option>
+          <option>Electric</option>
+          <option>BMX</option>
+        </select>
 
         <textarea
-          rows={4}
-          placeholder="Опис"
+          rows={5}
+          placeholder="Опишіть велосипед..."
           value={form.description}
           onChange={(e) =>
             setForm({
@@ -152,7 +177,7 @@ export default function Sell() {
 
         <input
           type="number"
-          placeholder="Ціна"
+          placeholder="Ціна (₴)"
           value={form.price}
           onChange={(e) =>
             setForm({
@@ -165,11 +190,13 @@ export default function Sell() {
 
         <button
           type="submit"
-          className="rounded-xl bg-green-600 py-3 font-bold text-white transition hover:bg-green-700"
+          className="rounded-xl bg-green-600 py-4 text-lg font-bold text-white transition hover:bg-green-700"
         >
           🚀 Опублікувати оголошення
         </button>
+
       </form>
+
     </div>
   );
 }
