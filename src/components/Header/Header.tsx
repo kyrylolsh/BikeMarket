@@ -54,7 +54,6 @@ export default function Header() {
         {/* Navigation */}
 
         <nav className="hidden items-center gap-6 lg:flex">
-
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -67,16 +66,26 @@ export default function Header() {
           </NavLink>
 
           <NavLink
-            to="/catalog"
+            to="/bikes"
             className={({ isActive }) =>
               isActive
                 ? "font-semibold text-green-600"
                 : "text-gray-600 hover:text-green-600"
             }
           >
-            Каталог
+            Велосипеди
           </NavLink>
 
+          <NavLink
+            to="/bike-parts"
+            className={({ isActive }) =>
+              isActive
+                ? "font-semibold text-green-600"
+                : "text-gray-600 hover:text-green-600"
+            }
+          >
+            Велозапчастини
+          </NavLink>
         </nav>
 
         {/* Sell button */}

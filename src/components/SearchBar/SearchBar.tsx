@@ -13,7 +13,7 @@ export default function SearchBar() {
       return;
     }
 
-    navigate(`/catalog?search=${encodeURIComponent(search)}`);
+    navigate(`/bikes?search=${search}`);
   }
 
   return (
@@ -34,7 +34,7 @@ export default function SearchBar() {
             handleSearch();
           }
         }}
-        placeholder="Пошук велосипеда..."
+        placeholder="Пошук..."
         className="ml-3 w-full outline-none"
       />
 

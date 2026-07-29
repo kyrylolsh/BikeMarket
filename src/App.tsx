@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 
 import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
+import Bikes from "./pages/Bikes";
+import BikeParts from "./pages/BikeParts";
 import Product from "./pages/Product";
 import Cart from "./pages/Cart";
 import Favorites from "./pages/Favorites";
@@ -30,7 +31,12 @@ function App() {
 
           <Route path="/" element={<Home />} />
 
-          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/bikes" element={<Bikes />} />
+
+          <Route
+            path="/bike-parts"
+            element={<BikeParts />}
+          />
 
           <Route
             path="/product/:id"

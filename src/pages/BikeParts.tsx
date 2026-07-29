@@ -7,8 +7,9 @@ import Loader from "../components/Loader/Loader";
 import FiltersPanel from "../components/Filters/FiltersPanel";
 
 import { useProducts } from "../hooks/useProducts";
+import { partsCategories } from "../data/partsCategories";
 
-export default function Catalog() {
+export default function BikeParts() {
   const { products, loading } = useProducts();
 
   const [searchParams, setSearchParams] =
@@ -46,7 +47,9 @@ export default function Catalog() {
   }
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = products.filter(
+      (product) => product.type === "gear"
+    );
 
     if (search) {
       result = result.filter(
@@ -93,6 +96,7 @@ export default function Catalog() {
 
     if (
       condition !== "All" &&
+      result.length > 0 &&
       "condition" in result[0]
     ) {
       result = result.filter(
@@ -146,125 +150,120 @@ export default function Catalog() {
   if (loading) {
     return <Loader />;
   }
-
   return (
-      <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto max-w-7xl px-6 py-10">
 
-        <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center justify-between">
 
-          <h1 className="text-4xl font-bold">
-            Каталог велосипедів
-          </h1>
+        <h1 className="text-4xl font-bold">
+          🛠 Велозапчастини
+        </h1>
 
-          <button
-            onClick={() => setFiltersOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:bg-gray-800"
-          >
-            <FiSliders />
-            Фільтри
-          </button>
+        <button
+          onClick={() => setFiltersOpen(true)}
+          className="flex items-center gap-2 rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:bg-gray-800"
+        >
+          <FiSliders />
+          Фільтри
+        </button>
+
+      </div>
+
+      <div className="mb-10 grid gap-4 md:grid-cols-3">
+
+        <input
+          type="text"
+          value={search}
+          placeholder="Пошук велозапчастини..."
+          onChange={(e) =>
+            setSearchParams({
+              search: e.target.value,
+              category,
+              sort,
+            })
+          }
+          className="rounded-xl border p-3 outline-none focus:border-green-600"
+        />
+
+        <select
+          value={category}
+          onChange={(e) =>
+            setSearchParams({
+              search,
+              category: e.target.value,
+              sort,
+            })
+          }
+          className="rounded-xl border p-3"
+        >
+          <option value="All">
+            Усі категорії
+          </option>
+
+          {partsCategories.map((category) => (
+            <option
+              key={category}
+              value={category}
+            >
+              {category}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={sort}
+          onChange={(e) =>
+            setSearchParams({
+              search,
+              category,
+              sort: e.target.value,
+            })
+          }
+          className="rounded-xl border p-3"
+        >
+          <option value="default">
+            Без сортування
+          </option>
+
+          <option value="newest">
+            Спочатку нові
+          </option>
+
+          <option value="oldest">
+            Спочатку старі
+          </option>
+
+          <option value="cheap">
+            Спочатку дешеві
+          </option>
+
+          <option value="expensive">
+            Спочатку дорогі
+          </option>
+        </select>
+
+      </div>
+
+      {filteredProducts.length === 0 ? (
+
+        <div className="rounded-xl bg-gray-100 p-8 text-center text-gray-500">
+          Велозапчастин поки немає.
+        </div>
+
+      ) : (
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+            />
+          ))}
 
         </div>
 
-        <div className="mb-10 grid gap-4 md:grid-cols-3">
-
-          <input
-            type="text"
-            value={search}
-            placeholder="Пошук велосипеда..."
-            onChange={(e) =>
-              setSearchParams({
-                search: e.target.value,
-                category,
-                sort,
-              })
-            }
-            className="rounded-xl border p-3 outline-none focus:border-green-600"
-          />
-
-          <select
-            value={category}
-            onChange={(e) =>
-              setSearchParams({
-                search,
-                category: e.target.value,
-                sort,
-              })
-            }
-            className="rounded-xl border p-3"
-          >
-            <option value="All">
-              Усі категорії
-            </option>
-
-            <option value="MTB">MTB</option>
-            <option value="Road">Road</option>
-            <option value="Mountain">
-              Mountain
-            </option>
-            <option value="Electric">
-              Electric
-            </option>
-            <option value="BMX">BMX</option>
-
-          </select>
-
-          <select
-            value={sort}
-            onChange={(e) =>
-              setSearchParams({
-                search,
-                category,
-                sort: e.target.value,
-              })
-            }
-            className="rounded-xl border p-3"
-          >
-            <option value="default">
-              Без сортування
-            </option>
-
-            <option value="newest">
-              Спочатку нові
-            </option>
-
-            <option value="oldest">
-              Спочатку старі
-            </option>
-
-            <option value="cheap">
-              Спочатку дешеві
-            </option>
-
-            <option value="expensive">
-              Спочатку дорогі
-            </option>
-
-          </select>
-
-        </div>
-
-        {filteredProducts.length === 0 ? (
-
-          <div className="rounded-xl bg-gray-100 p-8 text-center text-gray-500">
-            За вашим запитом товарів не знайдено.
-          </div>
-
-        ) : (
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-
-          </div>
-
-        )}
-
+      )}
         <FiltersPanel
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
@@ -280,5 +279,5 @@ export default function Catalog() {
         />
 
       </div>
-        );
-      }
+    );
+  }

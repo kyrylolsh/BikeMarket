@@ -3,15 +3,19 @@ export interface Product {
 
   name: string;
   brand: string;
+
+  type: "bike" | "gear";
+
   category: string;
+
   description: string;
 
   price: number;
 
-  // головне фото (для карток)
   image: string;
 
-  // усі фотографії
+  condition: "new" | "used";
+
   images: string[];
 
   sellerId?: string;
