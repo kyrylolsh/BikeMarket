@@ -7,7 +7,12 @@ export interface Product {
   description: string;
 
   price: number;
+
+  // головне фото (для карток)
   image: string;
+
+  // усі фотографії
+  images: string[];
 
   sellerId?: string;
   sellerEmail?: string;
