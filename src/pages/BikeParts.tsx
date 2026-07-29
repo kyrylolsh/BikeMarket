@@ -46,6 +46,10 @@ export default function BikeParts() {
     setCondition("All");
   }
 
+  const brands = useMemo(() => {
+      return [...new Set(products.map((p) => p.brand))].sort();
+    }, [products]);
+
   const filteredProducts = useMemo(() => {
     let result = products.filter(
       (product) => product.type === "gear"
@@ -94,13 +98,9 @@ export default function BikeParts() {
       );
     }
 
-    if (
-      condition !== "All" &&
-      result.length > 0 &&
-      "condition" in result[0]
-    ) {
+    if (condition !== "All") {
       result = result.filter(
-        (product: any) =>
+        (product) =>
           product.condition === condition
       );
     }
@@ -265,18 +265,19 @@ export default function BikeParts() {
 
       )}
         <FiltersPanel
-          open={filtersOpen}
-          onClose={() => setFiltersOpen(false)}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          setMinPrice={setMinPrice}
-          setMaxPrice={setMaxPrice}
-          brand={brand}
-          setBrand={setBrand}
-          condition={condition}
-          setCondition={setCondition}
-          onReset={resetFilters}
-        />
+                  open={filtersOpen}
+                  onClose={() => setFiltersOpen(false)}
+                  minPrice={minPrice}
+                  maxPrice={maxPrice}
+                  setMinPrice={setMinPrice}
+                  setMaxPrice={setMaxPrice}
+                  brand={brand}
+                  setBrand={setBrand}
+                  condition={condition}
+                  setCondition={setCondition}
+                  brands={brands}
+                  onReset={resetFilters}
+                />
 
       </div>
     );

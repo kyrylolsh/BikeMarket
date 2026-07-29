@@ -185,6 +185,20 @@ export default function ProductPage() {
                 <div className="mt-6 rounded-2xl border p-5">
 
                   <p className="font-semibold">
+                    📦 Стан
+                  </p>
+
+                  <p className="mt-2 text-lg">
+                    {product.condition === "new"
+                      ? "Новий"
+                      : "Б/У"}
+                  </p>
+
+                </div>
+
+                <div className="mt-6 rounded-2xl border p-5">
+
+                  <p className="font-semibold">
                     👤 Продавець
                   </p>
 

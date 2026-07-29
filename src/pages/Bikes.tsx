@@ -46,6 +46,10 @@ export default function Catalog() {
     setCondition("All");
   }
 
+  const brands = useMemo(() => {
+    return [...new Set(products.map((p) => p.brand))].sort();
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -92,12 +96,9 @@ export default function Catalog() {
       );
     }
 
-    if (
-      condition !== "All" &&
-      "condition" in result[0]
-    ) {
+    if (condition !== "All") {
       result = result.filter(
-        (product: any) =>
+        (product) =>
           product.condition === condition
       );
     }
@@ -276,9 +277,9 @@ export default function Catalog() {
           setBrand={setBrand}
           condition={condition}
           setCondition={setCondition}
+          brands={brands}
           onReset={resetFilters}
         />
-
       </div>
         );
       }

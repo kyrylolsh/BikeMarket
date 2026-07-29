@@ -16,6 +16,8 @@ interface Props {
   condition: string;
   setCondition: (v: string) => void;
 
+  brands: string[];
+
   onReset: () => void;
 }
 
@@ -34,6 +36,8 @@ export default function FiltersPanel({
 
   condition,
   setCondition,
+
+  brands,
 
   onReset,
 }: Props) {
@@ -114,12 +118,14 @@ export default function FiltersPanel({
                 Усі бренди
               </option>
 
-              <option>Trek</option>
-              <option>Scott</option>
-              <option>Cube</option>
-              <option>Giant</option>
-              <option>Cannondale</option>
-              <option>Specialized</option>
+              {brands.map((brandName) => (
+                <option
+                  key={brandName}
+                  value={brandName}
+                >
+                  {brandName}
+                </option>
+              ))}
             </select>
 
           </div>
@@ -141,11 +147,11 @@ export default function FiltersPanel({
                 Усі
               </option>
 
-              <option value="Новий">
+              <option value="new">
                 Новий
               </option>
 
-              <option value="Б/У">
+              <option value="used">
                 Б/У
               </option>
 
