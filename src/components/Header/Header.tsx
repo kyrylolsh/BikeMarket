@@ -266,107 +266,117 @@ return (
                       {/* Mobile menu */}
 
                       {mobileOpen && (
-                        <div className="border-t bg-white xl:hidden">
+                        <div className="xl:hidden border-t bg-white">
 
-                          <div className="flex flex-col gap-4 p-5">
+                          <div className="max-h-[calc(100vh-80px)] overflow-y-auto px-5 py-4">
 
                             {/* Search */}
 
-                            <SearchBar />
+                            <div className="mb-5">
+                              <SearchBar />
+                            </div>
 
                             {/* Navigation */}
 
-                            <NavLink
-                              to="/"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              🏠 Головна
-                            </NavLink>
+                            <div className="space-y-1">
 
-                            <NavLink
-                              to="/bikes"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              🚴 Велосипеди
-                            </NavLink>
+                              <NavLink
+                                to="/"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                🏠 Головна
+                              </NavLink>
 
-                            <NavLink
-                              to="/bike-parts"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              🛠 Велозапчастини
-                            </NavLink>
+                              <NavLink
+                                to="/bikes"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                🚴 Велосипеди
+                              </NavLink>
 
-                            <NavLink
-                              to="/sell"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              ➕ Продати
-                            </NavLink>
+                              <NavLink
+                                to="/bike-parts"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                🛠 Велозапчастини
+                              </NavLink>
 
-                            <NavLink
-                              to="/favorites"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              ❤️ Обране ({favorites.length})
-                            </NavLink>
+                              <NavLink
+                                to="/sell"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                ➕ Продати
+                              </NavLink>
 
-                            <NavLink
-                              to="/cart"
-                              onClick={() => setMobileOpen(false)}
-                              className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              🛒 Кошик ({cartCount})
-                            </NavLink>
+                              <NavLink
+                                to="/favorites"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                ❤️ Обране ({favorites.length})
+                              </NavLink>
+
+                              <NavLink
+                                to="/cart"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                              >
+                                🛒 Кошик ({cartCount})
+                              </NavLink>
+
+                            </div>
 
                             {user ? (
                               <>
-                                <hr />
+                                <hr className="my-4" />
 
-                                <div className="px-3 text-sm text-gray-500">
+                                <div className="mb-3 px-3 text-xs text-gray-500 break-all">
                                   {user.email}
                                 </div>
 
-                                <NavLink
-                                  to="/profile"
-                                  onClick={() => setMobileOpen(false)}
-                                  className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                                >
-                                  👤 Кабінет
-                                </NavLink>
+                                <div className="space-y-1">
 
-                                <NavLink
-                                  to="/orders"
-                                  onClick={() => setMobileOpen(false)}
-                                  className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                                >
-                                  📦 Мої замовлення
-                                </NavLink>
+                                  <NavLink
+                                    to="/profile"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                  >
+                                    👤 Кабінет
+                                  </NavLink>
 
-                                <NavLink
-                                  to="/seller-orders"
-                                  onClick={() => setMobileOpen(false)}
-                                  className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                                >
-                                  🛒 Замовлення клієнтів
-                                </NavLink>
+                                  <NavLink
+                                    to="/orders"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                  >
+                                    📦 Мої замовлення
+                                  </NavLink>
 
-                                <NavLink
-                                  to="/my-listings"
-                                  onClick={() => setMobileOpen(false)}
-                                  className="rounded-lg px-3 py-2 hover:bg-gray-100"
-                                >
-                                  🚲 Мої оголошення
-                                </NavLink>
+                                  <NavLink
+                                    to="/seller-orders"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                  >
+                                    🛒 Замовлення клієнтів
+                                  </NavLink>
+
+                                  <NavLink
+                                    to="/my-listings"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                  >
+                                    🚲 Мої оголошення
+                                  </NavLink>
+
+                                </div>
 
                                 <button
                                   onClick={handleLogout}
-                                  className="rounded-lg border border-red-500 px-3 py-2 text-left text-red-600 hover:bg-red-50"
+                                  className="mt-5 w-full rounded-xl border border-red-500 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50"
                                 >
                                   🚪 Вийти
                                 </button>
@@ -375,7 +385,7 @@ return (
                               <NavLink
                                 to="/register"
                                 onClick={() => setMobileOpen(false)}
-                                className="rounded-xl bg-green-600 px-4 py-3 text-center font-semibold text-white"
+                                className="mt-5 block rounded-xl bg-green-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-700"
                               >
                                 Реєстрація
                               </NavLink>
@@ -385,8 +395,3 @@ return (
 
                         </div>
                       )}
-
-                    </header>
-                  </>
-                );
-                }
