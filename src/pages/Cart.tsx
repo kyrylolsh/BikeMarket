@@ -28,10 +28,10 @@ export default function Cart() {
         </p>
 
         <Link
-          to="/catalog"
+          to="/"
           className="mt-8 inline-block rounded-xl bg-green-600 px-8 py-4 text-white hover:bg-green-700"
         >
-          Перейти до каталогу
+          Перейти до головної сторінки
         </Link>
       </div>
     );
