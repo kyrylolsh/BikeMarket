@@ -26,12 +26,23 @@ export default function Home() {
           MTB, Road, BMX та електровелосипеди.
         </p>
 
-        <Link
-          to="/catalog"
-          className="mt-8 inline-flex w-full justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 transition hover:scale-105 sm:w-auto"
-        >
-          Перейти в каталог
-        </Link>
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+
+          <Link
+            to="/bikes"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+          >
+            🚴 Купити велосипед
+          </Link>
+
+          <Link
+            to="/bike-parts"
+             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+          >
+            🛠 Купити велозапчастини
+          </Link>
+
+        </div>
 
       </section>
 

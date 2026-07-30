@@ -10,6 +10,8 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { useNotifications } from "../../context/NotificationContext";
+
 
 import SearchBar from "../SearchBar/SearchBar";
 
@@ -21,6 +23,11 @@ export default function Header() {
   const { cart } = useCart();
   const { favorites } = useFavorites();
   const { user, logout } = useAuth();
+
+  const {
+    newOrders,
+    unreadMessages,
+  } = useNotifications();
 
   const [mobileOpen, setMobileOpen] =
     useState(false);
@@ -217,15 +224,19 @@ return (
                               📦 Мої замовлення
                             </Link>
 
-                            <Link
+                            <NavLink
                               to="/seller-orders"
-                              onClick={() =>
-                                setProfileOpen(false)
-                              }
-                              className="block px-5 py-3 hover:bg-gray-100"
+                              onClick={() => setProfileOpen(false)}
+                              className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100"
                             >
-                              🛒 Замовлення клієнтів
-                            </Link>
+                              <span>🛒 Замовлення клієнтів</span>
+
+                              {newOrders > 0 && (
+                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                                  {newOrders}
+                                </span>
+                              )}
+                            </NavLink>
 
                             <Link
                               to="/my-listings"
@@ -236,6 +247,20 @@ return (
                             >
                               🚲 Мої оголошення
                             </Link>
+
+                            <NavLink
+                              to="/messages"
+                              onClick={() => setProfileOpen(false)}
+                              className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100"
+                            >
+                              <span>💬 Чат</span>
+
+                              {unreadMessages > 0 && (
+                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                                  {unreadMessages}
+                                </span>
+                              )}
+                            </NavLink>
 
                             <button
                               onClick={handleLogout}
@@ -365,9 +390,15 @@ return (
                                 <NavLink
                                   to="/seller-orders"
                                   onClick={() => setMobileOpen(false)}
-                                  className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                                  className="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-gray-100"
                                 >
-                                  🛒 Замовлення клієнтів
+                                  <span>🛒 Замовлення клієнтів</span>
+
+                                  {newOrders > 0 && (
+                                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                                      {newOrders}
+                                    </span>
+                                  )}
                                 </NavLink>
 
                                 <NavLink
