@@ -178,10 +178,24 @@ return (
                           }
                           className="flex items-center gap-2 rounded-xl border px-4 py-2 transition hover:bg-gray-50"
                         >
-                          <FiUser />
+
+                          {user.photoURL ? (
+
+                            <img
+                              src={user.photoURL}
+                              alt="avatar"
+                              className="h-8 w-8 rounded-full object-cover"
+                            />
+
+                          ) : (
+
+                            <FiUser />
+
+                          )}
+
 
                           <span className="hidden lg:block">
-                            Профіль
+                            {user.nickname}
                           </span>
 
                           <FiChevronDown
@@ -196,10 +210,26 @@ return (
                         {profileOpen && (
                           <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border bg-white shadow-2xl">
 
-                            <div className="border-b px-5 py-4">
+                            <div className="flex items-center gap-3 border-b px-5 py-4">
+
+                              {user.photoURL ? (
+
+                                <img
+                                  src={user.photoURL}
+                                  className="h-12 w-12 rounded-full object-cover"
+                                />
+
+                              ) : (
+
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                                  <FiUser />
+                                </div>
+
+                              )}
+
 
                               <p className="font-semibold">
-                                {user.email}
+                                {user.nickname}
                               </p>
 
                             </div>
@@ -367,8 +397,28 @@ return (
                               <>
                                 <hr className="my-4" />
 
-                                <div className="mb-3 px-3 text-xs text-gray-500 break-all">
-                                  {user.email}
+                                <div className="mb-3 flex items-center gap-3 px-3">
+
+                                  {user.photoURL ? (
+
+                                    <img
+                                      src={user.photoURL}
+                                      className="h-10 w-10 rounded-full object-cover"
+                                    />
+
+                                  ) : (
+
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                                      <FiUser />
+                                    </div>
+
+                                  )}
+
+
+                                  <span className="font-semibold">
+                                    {user.nickname}
+                                  </span>
+
                                 </div>
 
                                 <NavLink

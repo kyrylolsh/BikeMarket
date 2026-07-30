@@ -7,6 +7,7 @@ import { productService } from "../services/productService";
 
 import { bikeCategories } from "../data/bikeCategories";
 import { partsCategories } from "../data/partsCategories";
+import { FIELD_LIMITS } from "../utils/limits";
 
 export default function Sell() {
   const { user, loading } = useAuth();
@@ -43,6 +44,7 @@ export default function Sell() {
     return <Navigate to="/login" replace />;
   }
 
+
   async function uploadImage(file: File) {
     try {
       setUploading(true);
@@ -64,22 +66,29 @@ export default function Sell() {
 
       setForm((prev) => ({
         ...prev,
-        images: [...prev.images, result.secure_url],
+        images: [
+          ...prev.images,
+          result.secure_url,
+        ],
       }));
 
       toast.success("Фото додано");
+
     } catch (error) {
       console.error(error);
       toast.error("Помилка завантаження фото");
+
     } finally {
       setUploading(false);
     }
   }
 
+
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
   ) {
     e.preventDefault();
+
 
     if (
       !form.name ||
@@ -93,187 +102,281 @@ export default function Sell() {
       return;
     }
 
+
+    if (
+      form.name.length >
+      FIELD_LIMITS.productName
+    ) {
+      toast.error(
+        `Назва товару максимум ${FIELD_LIMITS.productName} символів`
+      );
+      return;
+    }
+
+
+    if (
+      form.brand.length >
+      FIELD_LIMITS.brand
+    ) {
+      toast.error(
+        `Бренд максимум ${FIELD_LIMITS.brand} символів`
+      );
+      return;
+    }
+
+
+    if (
+      form.description.length >
+      FIELD_LIMITS.description
+    ) {
+      toast.error(
+        `Опис максимум ${FIELD_LIMITS.description} символів`
+      );
+      return;
+    }
+
+
     try {
+
       await productService.addProduct({
-        name: form.name,
-        brand: form.brand,
+        name: form.name.trim(),
+
+        brand: form.brand.trim(),
+
+        description: form.description.trim(),
 
         type: form.type,
+
         category: form.category,
+
         condition: form.condition,
 
-        description: form.description,
-
         image: form.images[0],
+
         images: form.images,
 
         price: Number(form.price),
 
         sellerId: user.uid,
+
         sellerEmail: user.email ?? "",
+
+        sellerNickname: user.nickname,
 
         createdAt: new Date(),
       });
 
-      toast.success("Оголошення успішно створено");
+
+      toast.success(
+        "Оголошення успішно створено"
+      );
+
 
       navigate(
         form.type === "bike"
           ? "/bikes"
           : "/bike-parts"
       );
+
+
     } catch (error) {
+
       console.error(error);
-      toast.error("Не вдалося створити оголошення");
+
+      toast.error(
+        "Не вдалося створити оголошення"
+      );
+
     }
   }
 
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
+
       <h1 className="mb-8 text-4xl font-bold">
         🚀 Створити оголошення
       </h1>
+
 
       <form
         onSubmit={handleSubmit}
         className="space-y-8 rounded-2xl bg-white p-8 shadow"
       >
-      {/* ====================== Основна інформація ====================== */}
 
-      <div>
-        <h2 className="mb-2 text-2xl font-bold">
-          📦 Основна інформація
-        </h2>
 
-        <p className="mb-6 text-gray-500">
-          Заповніть основні характеристики товару.
-        </p>
+        <div>
 
-        <div className="space-y-5">
+          <h2 className="mb-2 text-2xl font-bold">
+            📦 Основна інформація
+          </h2>
 
-          <input
-            type="text"
-            placeholder="Назва товару"
-            value={form.name}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                name: e.target.value,
-              })
-            }
-            className="w-full rounded-xl border p-4"
-          />
 
-          <input
-            type="text"
-            placeholder="Бренд"
-            value={form.brand}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                brand: e.target.value,
-              })
-            }
-            className="w-full rounded-xl border p-4"
-          />
+          <div className="space-y-5">
 
-          <select
-            value={form.type}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                type: e.target.value as
-                  | "bike"
-                  | "gear",
 
-                category:
-                  e.target.value === "bike"
-                    ? bikeCategories[0]
-                    : partsCategories[0],
-              })
-            }
-            className="w-full rounded-xl border p-4"
-          >
-            <option value="bike">
-              🚲 Велосипед
-            </option>
+            <input
+              type="text"
+              placeholder="Назва товару"
+              value={form.name}
+              maxLength={FIELD_LIMITS.productName}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  name: e.target.value,
+                })
+              }
+              className="w-full rounded-xl border p-4"
+            />
 
-            <option value="gear">
-              🛠 Велозапчастина / аксесуар
-            </option>
-          </select>
+            <p className="text-sm text-gray-500">
+              {form.name.length}/
+              {FIELD_LIMITS.productName}
+            </p>
 
-          <select
-            value={form.category}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                category: e.target.value,
-              })
-            }
-            className="w-full rounded-xl border p-4"
-          >
-            {(form.type === "bike"
-              ? bikeCategories
-              : partsCategories
-            ).map((category) => (
-              <option
-                key={category}
-                value={category}
-              >
-                {category}
+
+
+            <input
+              type="text"
+              placeholder="Бренд"
+              value={form.brand}
+              maxLength={FIELD_LIMITS.brand}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  brand: e.target.value,
+                })
+              }
+              className="w-full rounded-xl border p-4"
+            />
+
+            <p className="text-sm text-gray-500">
+              {form.brand.length}/
+              {FIELD_LIMITS.brand}
+            </p>
+
+
+
+            <select
+              value={form.type}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  type:
+                    e.target.value as
+                    | "bike"
+                    | "gear",
+
+                  category:
+                    e.target.value === "bike"
+                      ? bikeCategories[0]
+                      : partsCategories[0],
+                })
+              }
+              className="w-full rounded-xl border p-4"
+            >
+
+              <option value="bike">
+                🚲 Велосипед
               </option>
-            ))}
-          </select>
 
-          <select
-            value={form.condition}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                condition: e.target.value as
-                  | "new"
-                  | "used",
-              })
-            }
-            className="w-full rounded-xl border p-4"
-          >
-            <option value="new">
-              🟢 Новий
-            </option>
+              <option value="gear">
+                🛠 Велозапчастина / аксесуар
+              </option>
 
-            <option value="used">
-              🟡 Б/У
-            </option>
-          </select>
+            </select>
+
+
+
+            <select
+              value={form.category}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  category: e.target.value,
+                })
+              }
+              className="w-full rounded-xl border p-4"
+            >
+
+              {(form.type === "bike"
+                ? bikeCategories
+                : partsCategories
+              ).map((category) => (
+
+                <option
+                  key={category}
+                  value={category}
+                >
+                  {category}
+                </option>
+
+              ))}
+
+            </select>
+
+
+
+            <select
+              value={form.condition}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  condition:
+                    e.target.value as
+                    | "new"
+                    | "used",
+                })
+              }
+              className="w-full rounded-xl border p-4"
+            >
+
+              <option value="new">
+                🟢 Новий
+              </option>
+
+              <option value="used">
+                🟡 Б/У
+              </option>
+
+            </select>
+
+
+          </div>
 
         </div>
-      </div>
 
-      {/* ====================== Опис ====================== */}
 
-      <div>
-        <h2 className="mb-2 text-2xl font-bold">
-          📝 Опис товару
-        </h2>
 
-        <p className="mb-6 text-gray-500">
-          Опишіть комплектацію, стан та особливості товару.
-        </p>
+        <div>
 
-        <textarea
-          rows={6}
-          placeholder="Опишіть товар..."
-          value={form.description}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              description: e.target.value,
-            })
-          }
-          className="w-full rounded-xl border p-4"
-        />
-      </div>
+          <h2 className="mb-2 text-2xl font-bold">
+            📝 Опис товару
+          </h2>
+
+
+          <textarea
+            rows={6}
+            placeholder="Опишіть товар..."
+            value={form.description}
+            maxLength={FIELD_LIMITS.description}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                description:
+                  e.target.value,
+              })
+            }
+            className="w-full rounded-xl border p-4"
+          />
+
+
+          <p className="text-sm text-gray-500">
+            {form.description.length}/
+            {FIELD_LIMITS.description}
+          </p>
+
+        </div>
 
       {/* ====================== Фото ====================== */}
 
@@ -384,6 +487,7 @@ export default function Sell() {
           type="number"
           placeholder="Ціна (₴)"
           value={form.price}
+          max="1000000"
           onChange={(e) =>
             setForm({
               ...form,

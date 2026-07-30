@@ -58,7 +58,7 @@ export default function SellerProfile() {
       </h1>
 
       <p className="mb-10 text-lg text-gray-500">
-        {products[0].sellerEmail}
+        👤 {products[0].sellerNickname ?? "Користувач"}
       </p>
 
       <p className="mb-8 text-gray-500">

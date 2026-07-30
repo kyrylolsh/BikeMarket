@@ -1,18 +1,19 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  increment,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   updateDoc,
   where,
-  deleteDoc,
 } from "firebase/firestore";
-
+import { FIELD_LIMITS } from "../utils/limits";
 import { db } from "../firebase";
 
 export interface Message {
@@ -37,10 +38,13 @@ export interface Chat {
   productImage?: string;
   productPrice?: number;
 
+  lastMessage: string;
+
+  buyerUnread: number;
+  sellerUnread: number;
+
   createdAt: any;
   updatedAt: any;
-
-  lastMessage: string;
 }
 
 export const chatService = {
@@ -67,26 +71,26 @@ export const chatService = {
       return snapshot.docs[0].id;
     }
 
-    const docRef = await addDoc(
-      collection(db, "chats"),
-      {
-        buyerId,
-        buyerEmail,
+    const docRef = await addDoc(collection(db, "chats"), {
+      buyerId,
+      buyerEmail,
 
-        sellerId,
-        sellerEmail,
+      sellerId,
+      sellerEmail,
 
-        productId,
-        productName,
-        productImage,
-        productPrice,
+      productId,
+      productName,
+      productImage,
+      productPrice,
 
-        lastMessage: "",
+      lastMessage: "",
 
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      }
-    );
+      buyerUnread: 0,
+      sellerUnread: 0,
+
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
 
     return docRef.id;
   },
@@ -128,9 +132,7 @@ export const chatService = {
   async getChat(
     chatId: string
   ): Promise<Chat | null> {
-    const snapshot = await getDoc(
-      doc(db, "chats", chatId)
-    );
+    const snapshot = await getDoc(doc(db, "chats", chatId));
 
     if (!snapshot.exists()) {
       return null;
@@ -142,28 +144,103 @@ export const chatService = {
     } as Chat;
   },
 
-  async sendMessage(
-    chatId: string,
-    senderId: string,
-    text: string
-  ) {
-    await addDoc(
-      collection(db, "messages"),
-      {
-        chatId,
-        senderId,
-        text,
-        createdAt: serverTimestamp(),
-      }
-    );
+    async sendMessage(
+      chatId: string,
+      senderId: string,
+      text: string
+    ): Promise<void> {
 
-    await updateDoc(
-      doc(db, "chats", chatId),
-      {
-        lastMessage: text,
-        updatedAt: serverTimestamp(),
+      const messageText = text.trim();
+
+
+      if (!messageText) {
+        throw new Error(
+          "Повідомлення порожнє"
+        );
       }
-    );
+
+
+      if (
+        messageText.length >
+        FIELD_LIMITS.message
+      ) {
+        throw new Error(
+          `Повідомлення максимум ${FIELD_LIMITS.message} символів`
+        );
+      }
+
+
+      const chat =
+        await this.getChat(chatId);
+
+
+      if (!chat) {
+        throw new Error(
+          "Чат не знайдено"
+        );
+      }
+
+
+      await addDoc(
+        collection(db, "messages"),
+        {
+          chatId,
+
+          senderId,
+
+          text: messageText,
+
+          createdAt:
+            serverTimestamp(),
+        }
+      );
+
+
+      const updateData: any = {
+        lastMessage: messageText,
+
+        updatedAt:
+          serverTimestamp(),
+      };
+
+
+      if (senderId === chat.buyerId) {
+
+        updateData.sellerUnread =
+          increment(1);
+
+      } else {
+
+        updateData.buyerUnread =
+          increment(1);
+
+      }
+
+
+      await updateDoc(
+        doc(db, "chats", chatId),
+        updateData
+      );
+
+    },
+
+  async markChatAsRead(
+    chatId: string,
+    userId: string
+  ) {
+    const chat = await this.getChat(chatId);
+
+    if (!chat) return;
+
+    if (userId === chat.buyerId) {
+      await updateDoc(doc(db, "chats", chatId), {
+        buyerUnread: 0,
+      });
+    } else if (userId === chat.sellerId) {
+      await updateDoc(doc(db, "chats", chatId), {
+        sellerUnread: 0,
+      });
+    }
   },
 
   listenMessages(
@@ -185,18 +262,19 @@ export const chatService = {
       );
     });
   },
- async deleteChat(chatId: string) {
-   const messages = await getDocs(
-     query(
-       collection(db, "messages"),
-       where("chatId", "==", chatId)
-     )
-   );
 
-   for (const message of messages.docs) {
-     await deleteDoc(message.ref);
-   }
+  async deleteChat(chatId: string) {
+    const messages = await getDocs(
+      query(
+        collection(db, "messages"),
+        where("chatId", "==", chatId)
+      )
+    );
 
-   await deleteDoc(doc(db, "chats", chatId));
- },
+    for (const message of messages.docs) {
+      await deleteDoc(message.ref);
+    }
+
+    await deleteDoc(doc(db, "chats", chatId));
+  },
 };

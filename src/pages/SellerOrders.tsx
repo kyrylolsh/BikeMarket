@@ -7,24 +7,34 @@ import {
   type Order,
 } from "../services/orderService";
 
+import { listenSellerOrders } from "../services/orderListener";
+
 export default function SellerOrders() {
   const { user, loading } = useAuth();
 
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    async function loadOrders() {
-      if (!user) return;
+    if (!user) return;
 
-      const data =
-        await orderService.getSellerOrders(
-          user.uid
+    const unsubscribe = listenSellerOrders(
+      user.uid,
+      async (orders) => {
+        setOrders(orders);
+
+        const hasNew = orders.some(
+          (order) => order.status === "Нове"
         );
 
-      setOrders(data);
-    }
+        if (hasNew) {
+          await orderService.markOrdersAsViewed(
+            user.uid
+          );
+        }
+      }
+    );
 
-    loadOrders();
+    return unsubscribe;
   }, [user]);
 
   if (loading) {
@@ -41,7 +51,6 @@ export default function SellerOrders() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
-
       <h1 className="mb-10 text-4xl font-bold">
         📦 Замовлення клієнтів
       </h1>
@@ -52,46 +61,38 @@ export default function SellerOrders() {
         </div>
       ) : (
         <div className="space-y-8">
-
           {orders.map((order) => (
-
             <div
               key={order.id}
               className="rounded-2xl bg-white p-8 shadow"
             >
-
               <div className="mb-6 flex items-center justify-between">
-
                 <h2 className="text-2xl font-bold">
-                  Нове замовлення
+                  {order.status === "Нове"
+                    ? "🆕 Нове замовлення"
+                    : "📦 Замовлення"}
                 </h2>
 
                 <span className="rounded-full bg-green-100 px-4 py-2 font-semibold text-green-700">
                   {order.status}
                 </span>
-
               </div>
 
               <div className="space-y-2">
-
                 <p>
-                  <b>👤 Покупець:</b>{" "}
-                  {order.name}
+                  <b>👤 Покупець:</b> {order.name}
                 </p>
 
                 <p>
-                  <b>📞 Телефон:</b>{" "}
-                  {order.phone}
+                  <b>📞 Телефон:</b> {order.phone}
                 </p>
 
                 <p>
-                  <b>📧 Email:</b>{" "}
-                  {order.email}
+                  <b>📧 Email:</b> {order.email}
                 </p>
 
                 <p>
-                  <b>📍 Адреса:</b>{" "}
-                  {order.address}
+                  <b>📍 Адреса:</b> {order.address}
                 </p>
 
                 <p>
@@ -100,7 +101,6 @@ export default function SellerOrders() {
                     ? "Банківська картка"
                     : "Оплата при отриманні"}
                 </p>
-
               </div>
 
               <hr className="my-6" />
@@ -110,62 +110,47 @@ export default function SellerOrders() {
               </h3>
 
               <div className="space-y-4">
-
                 {order.items
                   .filter(
                     (item) =>
                       item.sellerId === user.uid
                   )
                   .map((item) => (
-
                     <div
                       key={item.id}
                       className="flex items-center justify-between rounded-xl bg-gray-100 p-4"
                     >
-
                       <div>
-
                         <p className="font-bold">
                           {item.name}
                         </p>
 
-                        <p>
-                          {item.quantity} шт.
-                        </p>
-
+                        <p>{item.quantity} шт.</p>
                       </div>
 
                       <div className="font-bold text-green-600">
-
-                        {(item.price * item.quantity).toLocaleString()} ₴
-
+                        {(
+                          item.price * item.quantity
+                        ).toLocaleString()}{" "}
+                        ₴
                       </div>
-
                     </div>
-
                   ))}
-
               </div>
 
               <hr className="my-6" />
 
               <div className="flex justify-between text-2xl font-bold">
-
                 <span>Сума замовлення</span>
 
                 <span>
                   {order.total.toLocaleString()} ₴
                 </span>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
       )}
-
     </div>
   );
 }

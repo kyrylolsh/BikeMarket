@@ -1,8 +1,10 @@
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -51,9 +53,7 @@ export const orderService = {
   async create(order: CreateOrder) {
     await addDoc(collection(db, "orders"), {
       ...order,
-
       status: "Нове",
-
       createdAt: new Date(),
     });
   },
@@ -91,5 +91,33 @@ export const orderService = {
         (item) => item.sellerId === sellerId
       )
     );
+  },
+
+  async markOrdersAsViewed(
+    sellerId: string
+  ) {
+    const snapshot = await getDocs(
+      collection(db, "orders")
+    );
+
+    for (const document of snapshot.docs) {
+      const order = document.data() as Order;
+
+      const hasMyProducts = order.items.some(
+        (item) => item.sellerId === sellerId
+      );
+
+      if (
+        hasMyProducts &&
+        order.status === "Нове"
+      ) {
+        await updateDoc(
+          doc(db, "orders", document.id),
+          {
+            status: "Переглянуто",
+          }
+        );
+      }
+    }
   },
 };

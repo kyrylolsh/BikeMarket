@@ -19,7 +19,10 @@ export interface Product {
   images: string[];
 
   sellerId?: string;
+
   sellerEmail?: string;
+
+  sellerNickname?: string;
 
   createdAt?: any;
 }

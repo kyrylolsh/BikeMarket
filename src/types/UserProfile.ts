@@ -1,6 +1,9 @@
 export interface UserProfile {
   uid: string;
+
   email: string;
+
   nickname: string;
-  photoURL?: string;
+
+  createdAt?: any;
 }
