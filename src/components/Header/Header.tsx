@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   FiHeart,
@@ -27,6 +27,18 @@ export default function Header() {
 
   const [profileOpen, setProfileOpen] =
     useState(false);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   const cartCount = cart.reduce(
     (sum, item) => sum + item.quantity,
@@ -266,24 +278,20 @@ return (
                       {/* Mobile menu */}
 
                       {mobileOpen && (
-                        <div className="xl:hidden border-t bg-white">
+                        <div className="fixed inset-0 top-20 z-50 bg-white xl:hidden">
 
-                          <div className="max-h-[calc(100vh-80px)] overflow-y-auto px-5 py-4">
-
-                            {/* Search */}
+                          <div className="h-full overflow-y-auto px-5 py-4">
 
                             <div className="mb-5">
                               <SearchBar />
                             </div>
-
-                            {/* Navigation */}
 
                             <div className="space-y-1">
 
                               <NavLink
                                 to="/"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🏠 Головна
                               </NavLink>
@@ -291,7 +299,7 @@ return (
                               <NavLink
                                 to="/bikes"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🚴 Велосипеди
                               </NavLink>
@@ -299,7 +307,7 @@ return (
                               <NavLink
                                 to="/bike-parts"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🛠 Велозапчастини
                               </NavLink>
@@ -307,7 +315,7 @@ return (
                               <NavLink
                                 to="/sell"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 ➕ Продати
                               </NavLink>
@@ -315,7 +323,7 @@ return (
                               <NavLink
                                 to="/favorites"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 ❤️ Обране ({favorites.length})
                               </NavLink>
@@ -323,7 +331,7 @@ return (
                               <NavLink
                                 to="/cart"
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🛒 Кошик ({cartCount})
                               </NavLink>
@@ -338,45 +346,41 @@ return (
                                   {user.email}
                                 </div>
 
-                                <div className="space-y-1">
+                                <NavLink
+                                  to="/profile"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                                >
+                                  👤 Кабінет
+                                </NavLink>
 
-                                  <NavLink
-                                    to="/profile"
-                                    onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
-                                  >
-                                    👤 Кабінет
-                                  </NavLink>
+                                <NavLink
+                                  to="/orders"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                                >
+                                  📦 Мої замовлення
+                                </NavLink>
 
-                                  <NavLink
-                                    to="/orders"
-                                    onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
-                                  >
-                                    📦 Мої замовлення
-                                  </NavLink>
+                                <NavLink
+                                  to="/seller-orders"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                                >
+                                  🛒 Замовлення клієнтів
+                                </NavLink>
 
-                                  <NavLink
-                                    to="/seller-orders"
-                                    onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
-                                  >
-                                    🛒 Замовлення клієнтів
-                                  </NavLink>
-
-                                  <NavLink
-                                    to="/my-listings"
-                                    onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-[15px] hover:bg-gray-100"
-                                  >
-                                    🚲 Мої оголошення
-                                  </NavLink>
-
-                                </div>
+                                <NavLink
+                                  to="/my-listings"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                                >
+                                  🚲 Мої оголошення
+                                </NavLink>
 
                                 <button
                                   onClick={handleLogout}
-                                  className="mt-5 w-full rounded-xl border border-red-500 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50"
+                                  className="mt-5 w-full rounded-xl border border-red-500 px-4 py-3 font-semibold text-red-600 hover:bg-red-50"
                                 >
                                   🚪 Вийти
                                 </button>
@@ -385,7 +389,7 @@ return (
                               <NavLink
                                 to="/register"
                                 onClick={() => setMobileOpen(false)}
-                                className="mt-5 block rounded-xl bg-green-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-700"
+                                className="mt-5 block rounded-xl bg-green-600 px-4 py-3 text-center font-semibold text-white"
                               >
                                 Реєстрація
                               </NavLink>
@@ -395,3 +399,7 @@ return (
 
                         </div>
                       )}
+                      </header>
+                    </>
+                  );
+                  }
