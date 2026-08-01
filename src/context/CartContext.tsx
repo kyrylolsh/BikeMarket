@@ -7,6 +7,7 @@ import {
 
 import toast from "react-hot-toast";
 import type { Product } from "../types/Product";
+import { useAuth } from "./AuthContext";
 
 interface CartItem extends Product {
   quantity: number;
@@ -35,6 +36,15 @@ export function CartProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      setCart([]);
+      localStorage.removeItem("cart");
+    }
+  }, [user]);
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     const savedCart = localStorage.getItem("cart");
 
@@ -46,6 +56,13 @@ export function CartProvider({
   }, [cart]);
 
   function addToCart(product: Product) {
+    if (!user) {
+      toast.error(
+        "Увійдіть в акаунт, щоб додати товар у кошик"
+      );
+      return;
+    }
+
     setCart((prev) => {
       const existing = prev.find(
         (item) => item.id === product.id

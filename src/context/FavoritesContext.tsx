@@ -6,7 +6,9 @@ import {
 } from "react";
 
 import toast from "react-hot-toast";
+
 import type { Product } from "../types/Product";
+import { useAuth } from "./AuthContext";
 
 interface FavoritesContextType {
   favorites: Product[];
@@ -29,13 +31,23 @@ export function FavoritesProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useAuth();
+
   const [favorites, setFavorites] = useState<Product[]>(() => {
-    const savedFavorites = localStorage.getItem("favorites");
+    const savedFavorites =
+      localStorage.getItem("favorites");
 
     return savedFavorites
       ? JSON.parse(savedFavorites)
       : [];
   });
+
+  useEffect(() => {
+    if (!user) {
+      setFavorites([]);
+      localStorage.removeItem("favorites");
+    }
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -45,6 +57,13 @@ export function FavoritesProvider({
   }, [favorites]);
 
   function addToFavorites(product: Product) {
+    if (!user) {
+      toast.error(
+        "Увійдіть в акаунт, щоб додати товар в обране"
+      );
+      return;
+    }
+
     setFavorites((prev) => {
       const exists = prev.some(
         (item) => item.id === product.id
@@ -55,7 +74,9 @@ export function FavoritesProvider({
         return prev;
       }
 
-      toast.success(`${product.name} додано в обране`);
+      toast.success(
+        `${product.name} додано в обране`
+      );
 
       return [...prev, product];
     });
@@ -66,7 +87,9 @@ export function FavoritesProvider({
       prev.filter((item) => item.id !== id)
     );
 
-    toast.success("Товар видалено з обраного");
+    toast.success(
+      "Товар видалено з обраного"
+    );
   }
 
   function isFavorite(id: string) {
@@ -77,6 +100,7 @@ export function FavoritesProvider({
 
   function clearFavorites() {
     setFavorites([]);
+    localStorage.removeItem("favorites");
   }
 
   return (
@@ -95,7 +119,9 @@ export function FavoritesProvider({
 }
 
 export function useFavorites() {
-  const context = useContext(FavoritesContext);
+  const context = useContext(
+    FavoritesContext
+  );
 
   if (!context) {
     throw new Error(

@@ -23,6 +23,7 @@ import Chat from "./pages/Chat";
 import Messages from "./pages/Messages";
 import EditProduct from "./pages/EditProduct";
 import Events from "./pages/Events";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
           <Route
             path="/bike-parts"
             element={<BikeParts />}
+          />
+
+          <Route
+            path="/search"
+            element={<Search />}
           />
 
           <Route

@@ -188,7 +188,11 @@ return (
                     {/* User */}
 
                     {user ? (
-                      <div className="relative hidden md:block">
+                      <div
+                        className="relative hidden md:block group"
+                        onMouseEnter={() => setProfileOpen(true)}
+                        onMouseLeave={() => setProfileOpen(false)}
+                      >
 
                         <button
                           onClick={() =>
@@ -226,7 +230,30 @@ return (
                         </button>
 
                         {profileOpen && (
-                         <div className="absolute right-0 mt-3 z-[100] w-64 overflow-hidden rounded-2xl border bg-white shadow-2xl">
+                         <div
+                           className={`
+                             absolute
+                             right-0
+                             top-full
+                             mt-2
+                             z-[100]
+                             w-64
+                             overflow-hidden
+                             rounded-2xl
+                             border
+                             bg-white
+                             shadow-2xl
+
+                             transition-all
+                             duration-200
+
+                             ${
+                               profileOpen
+                                 ? "opacity-100 visible translate-y-0"
+                                 : "opacity-0 invisible -translate-y-2"
+                             }
+                           `}
+                         >
 
                             <div className="flex items-center gap-3 border-b px-5 py-4">
 

@@ -192,9 +192,12 @@ export function AuthProvider({
 
 
   async function logout() {
+    localStorage.removeItem("cart");
+    localStorage.removeItem("favorites");
+
+    setUser(null);
 
     await signOut(auth);
-
   }
 
 

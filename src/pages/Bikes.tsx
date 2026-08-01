@@ -13,6 +13,16 @@ import { bikeCategories } from "../data/bikeCategories";
 export default function Bikes() {
   const { products, loading } = useProducts();
 
+  console.log(products);
+  console.table(
+    products.map((p) => ({
+      name: p.name,
+      type: p.type,
+      brand: p.brand,
+      category: p.category,
+    }))
+  );
+
   const bikeProducts = useMemo(() => {
     return products.filter(
       (product) => product.type === "bike"
@@ -159,6 +169,7 @@ export default function Bikes() {
   if (loading) {
     return <Loader />;
   }
+
 return (
   <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
 

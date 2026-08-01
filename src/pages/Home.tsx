@@ -37,9 +37,16 @@ export default function Home() {
 
           <Link
             to="/bike-parts"
-             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
           >
             🛠 Купити велозапчастини
+          </Link>
+
+          <Link
+            to="/events"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+          >
+            📅 Переглянути велоподії
           </Link>
 
         </div>
