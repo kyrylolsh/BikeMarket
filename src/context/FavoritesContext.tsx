@@ -33,28 +33,31 @@ export function FavoritesProvider({
 }) {
   const { user } = useAuth();
 
-  const [favorites, setFavorites] = useState<Product[]>(() => {
-    const savedFavorites =
-      localStorage.getItem("favorites");
+  const [favorites, setFavorites] = useState<Product[]>([]);
 
-    return savedFavorites
-      ? JSON.parse(savedFavorites)
-      : [];
-  });
-
+  // Завантаження обраного конкретного користувача
   useEffect(() => {
     if (!user) {
       setFavorites([]);
-      localStorage.removeItem("favorites");
+      return;
     }
+
+    const saved = localStorage.getItem(
+      `favorites_${user.uid}`
+    );
+
+    setFavorites(saved ? JSON.parse(saved) : []);
   }, [user]);
 
+  // Збереження
   useEffect(() => {
+    if (!user) return;
+
     localStorage.setItem(
-      "favorites",
+      `favorites_${user.uid}`,
       JSON.stringify(favorites)
     );
-  }, [favorites]);
+  }, [favorites, user]);
 
   function addToFavorites(product: Product) {
     if (!user) {
@@ -100,7 +103,6 @@ export function FavoritesProvider({
 
   function clearFavorites() {
     setFavorites([]);
-    localStorage.removeItem("favorites");
   }
 
   return (

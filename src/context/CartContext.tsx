@@ -15,15 +15,10 @@ interface CartItem extends Product {
 
 interface CartContextType {
   cart: CartItem[];
-
   addToCart: (product: Product) => void;
-
   increaseQuantity: (id: string) => void;
-
   decreaseQuantity: (id: string) => void;
-
   removeFromCart: (id: string) => void;
-
   clearCart: () => void;
 }
 
@@ -38,22 +33,31 @@ export function CartProvider({
 }) {
   const { user } = useAuth();
 
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  // Завантаження кошика конкретного користувача
   useEffect(() => {
     if (!user) {
       setCart([]);
-      localStorage.removeItem("cart");
+      return;
     }
+
+    const saved = localStorage.getItem(
+      `cart_${user.uid}`
+    );
+
+    setCart(saved ? JSON.parse(saved) : []);
   }, [user]);
 
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const savedCart = localStorage.getItem("cart");
-
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
-
+  // Збереження кошика конкретного користувача
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!user) return;
+
+    localStorage.setItem(
+      `cart_${user.uid}`,
+      JSON.stringify(cart)
+    );
+  }, [cart, user]);
 
   function addToCart(product: Product) {
     if (!user) {
