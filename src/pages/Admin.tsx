@@ -11,10 +11,22 @@ export default function Admin() {
   const [form, setForm] = useState({
     name: "",
     brand: "",
+
+    type: "" as "" | "bike" | "gear" | "event",
+
     category: "",
+
+    condition: "used" as "new" | "used",
+
     description: "",
-    image: "",
+
+    images: [] as string[],
+
     price: "",
+
+    eventDate: "",
+    eventLocation: "",
+    phone: "",
   });
 
   async function loadProducts() {
@@ -32,14 +44,32 @@ export default function Admin() {
     e.preventDefault();
 
     if (
+      !form.type ||
       !form.name ||
-      !form.brand ||
-      !form.category ||
       !form.description ||
-      !form.image ||
-      !form.price
+      form.images.length === 0
     ) {
       toast.error("Заповніть усі поля");
+      return;
+    }
+
+
+    if (
+      form.type !== "event" &&
+      (!form.brand || !form.category || !form.price)
+    ) {
+      toast.error("Заповніть усі поля");
+      return;
+    }
+
+
+    if (
+      form.type === "event" &&
+      (!form.eventDate ||
+       !form.eventLocation ||
+       !form.phone)
+    ) {
+      toast.error("Заповніть інформацію про подію");
       return;
     }
 

@@ -10,8 +10,14 @@ import { useProducts } from "../hooks/useProducts";
 
 import { bikeCategories } from "../data/bikeCategories";
 
-export default function Catalog() {
+export default function Bikes() {
   const { products, loading } = useProducts();
+
+  const bikeProducts = useMemo(() => {
+    return products.filter(
+      (product) => product.type === "bike"
+    );
+  }, [products]);
 
   const [searchParams, setSearchParams] =
     useSearchParams();
@@ -48,11 +54,15 @@ export default function Catalog() {
   }
 
   const brands = useMemo(() => {
-    return [...new Set(products.map((p) => p.brand))].sort();
-  }, [products]);
+    return [
+      ...new Set(
+        bikeProducts.map((p) => p.brand)
+      ),
+    ].sort();
+  }, [bikeProducts]);
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = [...bikeProducts];
 
     if (search) {
       result = result.filter(
@@ -136,15 +146,15 @@ export default function Catalog() {
 
     return result;
   }, [
-    products,
-    search,
-    category,
-    sort,
-    minPrice,
-    maxPrice,
-    brand,
-    condition,
-  ]);
+       bikeProducts,
+       search,
+       category,
+       sort,
+       minPrice,
+       maxPrice,
+       brand,
+       condition,
+     ]);
 
   if (loading) {
     return <Loader />;

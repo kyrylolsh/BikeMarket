@@ -1,18 +1,29 @@
 import {
   collection,
   onSnapshot,
+  query,
+  orderBy,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 import type { Order } from "./orderService";
 
+
 export function listenSellerOrders(
   sellerId: string,
   callback: (orders: Order[]) => void
 ) {
-  return onSnapshot(
+
+  const q = query(
     collection(db, "orders"),
+    orderBy("createdAt", "desc")
+  );
+
+
+  return onSnapshot(
+    q,
     (snapshot) => {
+
       const orders = snapshot.docs
         .map((doc) => ({
           id: doc.id,
@@ -23,9 +34,28 @@ export function listenSellerOrders(
             (item: any) =>
               item.sellerId === sellerId
           )
-        ) as Order[];
+        )
+        .sort((a: any, b: any) => {
+
+          const dateA =
+            a.createdAt?.toDate
+              ? a.createdAt.toDate()
+              : new Date(a.createdAt);
+
+
+          const dateB =
+            b.createdAt?.toDate
+              ? b.createdAt.toDate()
+              : new Date(b.createdAt);
+
+
+          return dateB.getTime() - dateA.getTime();
+
+        }) as Order[];
+
 
       callback(orders);
+
     }
   );
 }

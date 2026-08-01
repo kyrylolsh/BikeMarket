@@ -22,6 +22,7 @@ import SellerProfile from "./pages/SellerProfile";
 import Chat from "./pages/Chat";
 import Messages from "./pages/Messages";
 import EditProduct from "./pages/EditProduct";
+import Events from "./pages/Events";
 
 function App() {
   return (
@@ -42,6 +43,11 @@ function App() {
           <Route
             path="/product/:id"
             element={<Product />}
+          />
+
+          <Route
+           path="/events"
+           element={<Events />}
           />
 
           <Route

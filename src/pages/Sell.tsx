@@ -19,9 +19,9 @@ export default function Sell() {
     name: "",
     brand: "",
 
-    type: "bike" as "bike" | "gear",
+    type: "" as "" | "bike" | "gear" | "event",
 
-    category: bikeCategories[0],
+    category: "",
 
     condition: "used" as "new" | "used",
 
@@ -30,6 +30,12 @@ export default function Sell() {
     images: [] as string[],
 
     price: "",
+
+    eventDate: "",
+
+    eventLocation: "",
+
+    phone: "",
   });
 
   if (loading) {
@@ -90,18 +96,61 @@ export default function Sell() {
     e.preventDefault();
 
 
-    if (
-      !form.name ||
-      !form.brand ||
-      !form.category ||
-      !form.description ||
-      form.images.length === 0 ||
-      !form.price
-    ) {
-      toast.error("Заповніть усі поля");
+    if (!form.type) {
+      toast.error("Оберіть категорію оголошення");
       return;
     }
 
+    if (!form.name.trim()) {
+      toast.error("Введіть назву");
+      return;
+    }
+
+    if (!form.description.trim()) {
+      toast.error("Введіть опис");
+      return;
+    }
+
+    if (form.images.length === 0) {
+      toast.error("Додайте хоча б одне фото");
+      return;
+    }
+
+    // Для велосипедів і запчастин
+    if (form.type !== "event") {
+      if (!form.category) {
+        toast.error("Оберіть підкатегорію");
+        return;
+      }
+
+      if (!form.brand.trim()) {
+        toast.error("Вкажіть бренд");
+        return;
+      }
+
+      if (!form.price) {
+        toast.error("Вкажіть ціну");
+        return;
+      }
+    }
+
+    // Для подій
+    if (form.type === "event") {
+      if (!form.eventDate) {
+        toast.error("Оберіть дату");
+        return;
+      }
+
+      if (!form.eventLocation.trim()) {
+        toast.error("Вкажіть місце проведення");
+        return;
+      }
+
+      if (!form.phone.trim()) {
+        toast.error("Вкажіть номер телефону");
+        return;
+      }
+    }
 
     if (
       form.name.length >
@@ -139,23 +188,51 @@ export default function Sell() {
     try {
 
       await productService.addProduct({
+
         name: form.name.trim(),
 
-        brand: form.brand.trim(),
+        brand:
+          form.type === "event"
+            ? ""
+            : form.brand.trim(),
 
-        description: form.description.trim(),
+        description:
+          form.description.trim(),
 
         type: form.type,
 
-        category: form.category,
+        category:
+          form.category,
 
-        condition: form.condition,
+        condition:
+          form.condition,
 
-        image: form.images[0],
+        image:
+          form.images[0],
 
-        images: form.images,
+        images:
+          form.images,
 
-        price: Number(form.price),
+        price:
+          form.type === "event"
+            ? 0
+            : Number(form.price),
+
+        eventDate:
+          form.type === "event"
+            ? form.eventDate
+            : "",
+
+        eventLocation:
+          form.type === "event"
+            ? form.eventLocation
+            : "",
+
+        phone:
+          form.type === "event"
+            ? form.phone
+            : "",
+
 
         sellerId: user.uid,
 
@@ -164,6 +241,7 @@ export default function Sell() {
         sellerNickname: user.nickname,
 
         createdAt: new Date(),
+
       });
 
 
@@ -175,9 +253,10 @@ export default function Sell() {
       navigate(
         form.type === "bike"
           ? "/bikes"
-          : "/bike-parts"
+          : form.type === "gear"
+          ? "/bike-parts"
+          : "/events"
       );
-
 
     } catch (error) {
 
@@ -205,10 +284,113 @@ export default function Sell() {
       >
 
 
+      {/* ====================== Вибір категорії ====================== */}
+
+      <div>
+
+      <h2 className="mb-3 text-2xl font-bold">
+        Оберіть категорію оголошення
+      </h2>
+
+
+      <select
+        value={form.type}
+        onChange={(e) => {
+
+          const value =
+            e.target.value as
+            "" | "bike" | "gear" | "event";
+
+          setForm({
+            ...form,
+            type: value,
+            category: "",
+          });
+
+        }}
+        className="w-full rounded-xl border p-4"
+      >
+
+        <option value="">
+          Оберіть категорію
+        </option>
+
+        <option value="bike">
+          🚲 Велосипед
+        </option>
+
+        <option value="gear">
+          🛠 Велозапчастина
+        </option>
+
+        <option value="event">
+          📅 Подія
+        </option>
+
+      </select>
+
+    {/* ================= Підкатегорія ================= */}
+
+    {form.type && form.type !== "event" && (
+
+    <div>
+
+    <h2 className="mb-3 mt-5 text-2xl font-bold">
+      Оберіть підкатегорію
+    </h2>
+
+
+    <select
+      value={form.category}
+
+      onChange={(e)=>
+        setForm({
+          ...form,
+          category:e.target.value,
+        })
+      }
+
+      className="w-full rounded-xl border p-4"
+    >
+
+    <option value="">
+      Оберіть підкатегорію
+    </option>
+
+
+    {(
+      form.type === "bike"
+        ? bikeCategories
+        : partsCategories
+
+    ).map((item)=>(
+
+    <option
+     key={item}
+     value={item}
+    >
+     {item}
+    </option>
+
+    ))}
+
+
+    </select>
+
+
+    </div>
+
+    )}
+
+      </div>
+
+
         <div>
 
           <h2 className="mb-2 text-2xl font-bold">
-            📦 Основна інформація
+            {form.type === "event"
+              ? "📅 Інформація про подію"
+              : "📦 Основна інформація"}
           </h2>
 
 
@@ -217,7 +399,11 @@ export default function Sell() {
 
             <input
               type="text"
-              placeholder="Назва товару"
+              placeholder={
+                form.type === "event"
+                  ? "Назва події"
+                  : "Назва товару"
+              }
               value={form.name}
               maxLength={FIELD_LIMITS.productName}
               onChange={(e) =>
@@ -236,110 +422,95 @@ export default function Sell() {
 
 
 
+            {form.type !== "event" && (
+              <>
+                <input
+                  type="text"
+                  placeholder="Бренд"
+                  value={form.brand}
+                  maxLength={FIELD_LIMITS.brand}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      brand: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-xl border p-4"
+                />
+                <p className="text-sm text-gray-500">
+                              {form.brand.length}/
+                              {FIELD_LIMITS.brand}
+                            </p>
+              </>
+            )}
+
+        {/* ===== Поля для події ===== */}
+
+        {form.type === "event" && (
+          <>
             <input
-              type="text"
-              placeholder="Бренд"
-              value={form.brand}
-              maxLength={FIELD_LIMITS.brand}
+              type="date"
+              value={form.eventDate}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  brand: e.target.value,
+                  eventDate: e.target.value,
                 })
               }
               className="w-full rounded-xl border p-4"
             />
 
-            <p className="text-sm text-gray-500">
-              {form.brand.length}/
-              {FIELD_LIMITS.brand}
-            </p>
-
-
-
-            <select
-              value={form.type}
+            <input
+              type="text"
+              placeholder="Місце проведення"
+              value={form.eventLocation}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  type:
-                    e.target.value as
-                    | "bike"
-                    | "gear",
-
-                  category:
-                    e.target.value === "bike"
-                      ? bikeCategories[0]
-                      : partsCategories[0],
+                  eventLocation: e.target.value,
                 })
               }
               className="w-full rounded-xl border p-4"
-            >
+            />
 
-              <option value="bike">
-                🚲 Велосипед
-              </option>
-
-              <option value="gear">
-                🛠 Велозапчастина / аксесуар
-              </option>
-
-            </select>
-
-
-
-            <select
-              value={form.category}
+            <input
+              type="tel"
+              placeholder="Номер телефону"
+              value={form.phone}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  category: e.target.value,
+                  phone: e.target.value,
                 })
               }
               className="w-full rounded-xl border p-4"
-            >
+            />
 
-              {(form.type === "bike"
-                ? bikeCategories
-                : partsCategories
-              ).map((category) => (
-
-                <option
-                  key={category}
-                  value={category}
-                >
-                  {category}
-                </option>
-
-              ))}
-
-            </select>
+            <input
+              type="email"
+              value={user.email ?? ""}
+              disabled
+              className="w-full rounded-xl border bg-gray-100 p-4"
+            />
+          </>
+        )}
 
 
-
-            <select
-              value={form.condition}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  condition:
-                    e.target.value as
-                    | "new"
-                    | "used",
-                })
-              }
-              className="w-full rounded-xl border p-4"
-            >
-
-              <option value="new">
-                🟢 Новий
-              </option>
-
-              <option value="used">
-                🟡 Б/У
-              </option>
-
-            </select>
+            {form.type !== "event" && (
+              <select
+                value={form.condition}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    condition: e.target.value as "new" | "used",
+                  })
+                }
+                className="w-full rounded-xl border p-4"
+              >
+                <option value="new">🟢 Новий</option>
+                <option value="used">🟡 Б/У</option>
+              </select>
+            )}
 
 
           </div>
@@ -351,13 +522,19 @@ export default function Sell() {
         <div>
 
           <h2 className="mb-2 text-2xl font-bold">
-            📝 Опис товару
+            {form.type === "event"
+              ? "📝 Опис події"
+              : "📝 Опис товару"}
           </h2>
 
 
           <textarea
             rows={6}
-            placeholder="Опишіть товар..."
+            placeholder={
+              form.type === "event"
+                ? "Опишіть подію..."
+                : "Опишіть товар..."
+            }
             value={form.description}
             maxLength={FIELD_LIMITS.description}
             onChange={(e) =>
@@ -472,31 +649,34 @@ export default function Sell() {
           </div>
         )}
       </div>
-      {/* ====================== Ціна ====================== */}
+      {/* ====================== Ціна або інформація про подію ====================== */}
 
-      <div>
-        <h2 className="mb-2 text-2xl font-bold">
-          💰 Вартість
-        </h2>
+      {form.type !== "event" && (
 
-        <p className="mb-6 text-gray-500">
-          Вкажіть бажану ціну продажу у гривнях.
-        </p>
+        <div>
+          <h2 className="mb-2 text-2xl font-bold">
+            💰 Вартість
+          </h2>
 
-        <input
-          type="number"
-          placeholder="Ціна (₴)"
-          value={form.price}
-          max="1000000"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              price: e.target.value,
-            })
-          }
-          className="w-full rounded-xl border p-4"
-        />
-      </div>
+          <p className="mb-6 text-gray-500">
+            Вкажіть бажану ціну продажу у гривнях.
+          </p>
+
+          <input
+            type="number"
+            placeholder="Ціна (₴)"
+            value={form.price}
+            max="1000000"
+            onChange={(e) =>
+              setForm({
+                ...form,
+                price: e.target.value,
+              })
+            }
+            className="w-full rounded-xl border p-4"
+          />
+        </div>
+      )}
 
       {/* ====================== Кнопка ====================== */}
 
@@ -504,10 +684,14 @@ export default function Sell() {
 
         <button
           type="submit"
-          disabled={uploading}
+          disabled={
+            uploading || !form.type
+          }
           className="w-full rounded-xl bg-green-600 py-4 text-lg font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
-          🚀 Опублікувати оголошення
+          {form.type === "event"
+            ? "📅 Створити подію"
+            : "🚀 Опублікувати оголошення"}
         </button>
 
       </div>

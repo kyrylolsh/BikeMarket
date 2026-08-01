@@ -35,6 +35,7 @@ export default function Header() {
   const [profileOpen, setProfileOpen] =
     useState(false);
 
+
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
@@ -94,27 +95,44 @@ return (
             Головна
           </NavLink>
 
-          <NavLink
-            to="/bikes"
-            className={({ isActive }) =>
-              isActive
-                ? "font-semibold text-green-600"
-                : "text-gray-600 hover:text-green-600"
-            }
-          >
-            Велосипеди
-          </NavLink>
+        <div className="relative group">
+          <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 font-semibold">
+            Каталог
+            <FiChevronDown />
+          </button>
 
-          <NavLink
-            to="/bike-parts"
-            className={({ isActive }) =>
-              isActive
-                ? "font-semibold text-green-600"
-                : "text-gray-600 hover:text-green-600"
-            }
+          <div
+            className="
+              invisible absolute left-0 top-full mt-2
+              w-60 rounded-xl border bg-white shadow-xl
+              opacity-0 transition-all
+              group-hover:visible
+              group-hover:opacity-100
+              z-50
+            "
           >
-            Велозапчастини
-          </NavLink>
+            <NavLink
+              to="/bikes"
+              className="block px-5 py-3 hover:bg-gray-100"
+            >
+              🚲 Велосипеди
+            </NavLink>
+
+            <NavLink
+              to="/bike-parts"
+              className="block px-5 py-3 hover:bg-gray-100"
+            >
+              🛠 Велозапчастини
+            </NavLink>
+
+            <NavLink
+              to="/events"
+              className="block px-5 py-3 hover:bg-gray-100"
+            >
+              📅 Події
+            </NavLink>
+          </div>
+        </div>
 
         </nav>
 
@@ -208,7 +226,7 @@ return (
                         </button>
 
                         {profileOpen && (
-                          <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border bg-white shadow-2xl">
+                         <div className="absolute right-0 mt-3 z-[100] w-64 overflow-hidden rounded-2xl border bg-white shadow-2xl">
 
                             <div className="flex items-center gap-3 border-b px-5 py-4">
 

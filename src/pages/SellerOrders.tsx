@@ -19,18 +19,8 @@ export default function SellerOrders() {
 
     const unsubscribe = listenSellerOrders(
       user.uid,
-      async (orders) => {
+      (orders) => {
         setOrders(orders);
-
-        const hasNew = orders.some(
-          (order) => order.status === "Нове"
-        );
-
-        if (hasNew) {
-          await orderService.markOrdersAsViewed(
-            user.uid
-          );
-        }
       }
     );
 

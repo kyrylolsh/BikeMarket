@@ -2,9 +2,10 @@ export interface Product {
   id: string;
 
   name: string;
+
   brand: string;
 
-  type: "bike" | "gear";
+  type: "bike" | "gear" | "event";
 
   category: string;
 
@@ -14,7 +15,7 @@ export interface Product {
 
   image: string;
 
-  condition: "new" | "used";
+  condition?: "new" | "used";
 
   images: string[];
 
@@ -23,6 +24,16 @@ export interface Product {
   sellerEmail?: string;
 
   sellerNickname?: string;
+
+
+  // ===== EVENT =====
+
+  eventDate?: string;
+
+  eventLocation?: string;
+
+  phone?: string;
+
 
   createdAt?: any;
 }

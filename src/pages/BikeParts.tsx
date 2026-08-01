@@ -47,7 +47,13 @@ export default function BikeParts() {
   }
 
   const brands = useMemo(() => {
-    return [...new Set(products.map((p) => p.brand))].sort();
+    return [
+      ...new Set(
+        products
+          .filter((p) => p.type === "gear")
+          .map((p) => p.brand)
+      ),
+    ].sort();
   }, [products]);
 
   const filteredProducts = useMemo(() => {
