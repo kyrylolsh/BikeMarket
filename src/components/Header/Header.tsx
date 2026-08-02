@@ -35,6 +35,8 @@ export default function Header() {
   const [profileOpen, setProfileOpen] =
     useState(false);
 
+  const [profileHover, setProfileHover] =
+    useState(false);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -229,7 +231,7 @@ return (
                           />
                         </button>
 
-                        {profileOpen && (
+                        {(profileHover || profileOpen) && (
                          <div
                            className={`
                              absolute
@@ -375,6 +377,7 @@ return (
                   </div>
 
                 </div>
+
                       {/* Mobile menu */}
 
                       {mobileOpen && (
@@ -410,6 +413,14 @@ return (
                                 className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🛠 Велозапчастини
+                              </NavLink>
+
+                              <NavLink
+                                to="/events"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                              >
+                                📅 Велоподії
                               </NavLink>
 
                               <NavLink
