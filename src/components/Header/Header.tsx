@@ -518,6 +518,20 @@ return (
                                   🚲 Мої оголошення
                                 </NavLink>
 
+                                <NavLink
+                                  to="/messages"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-gray-100"
+                                >
+                                  <span>💬 Чат</span>
+
+                                  {unreadMessages > 0 && (
+                                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                                      {unreadMessages}
+                                    </span>
+                                  )}
+                                </NavLink>
+
                                 <button
                                   onClick={handleLogout}
                                   className="mt-5 w-full rounded-xl border border-red-500 px-4 py-3 font-semibold text-red-600 hover:bg-red-50"
