@@ -75,12 +75,19 @@ return (
 
         {/* Logo */}
 
-        <Link
-          to="/"
-          className="shrink-0 text-2xl font-extrabold text-green-600 lg:text-3xl"
-        >
-          🚴 BikeMarket
-        </Link>
+        <div className="flex flex-1 items-center gap-3 xl:flex-none">
+          <Link
+            to="/"
+            className="shrink-0 text-2xl font-extrabold text-green-600 lg:text-3xl"
+          >
+            🚴 BikeMarket
+          </Link>
+
+          {/* Мобільний пошук */}
+          <div className="flex-1 md:hidden">
+            <SearchBar />
+          </div>
+        </div>
 
         {/* Desktop navigation */}
 
@@ -140,7 +147,7 @@ return (
 
         {/* Search */}
 
-        <div className="hidden min-w-0 flex-1 md:block">
+        <div className="hidden min-w-0 flex-1 md:block xl:block">
           <SearchBar />
         </div>
 
@@ -384,10 +391,6 @@ return (
                         <div className="fixed inset-0 top-20 z-50 bg-white xl:hidden">
 
                           <div className="h-full overflow-y-auto px-5 py-4">
-
-                            <div className="mb-5">
-                              <SearchBar />
-                            </div>
 
                             <div className="space-y-1">
 
