@@ -76,14 +76,7 @@ export default function Home() {
 
         </div>
 
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            to="/catalog"
-            className="inline-flex rounded-xl bg-green-600 px-6 py-3 font-bold text-white"
-          >
-            Усі товари
-          </Link>
-        </div>
+
 
       </section>
 
