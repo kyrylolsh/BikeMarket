@@ -52,6 +52,10 @@ export default function Sell() {
 
 
   async function uploadImage(file: File) {
+      if (form.images.length >= 8) {
+        toast.error("Максимум 8 фотографій");
+        return;
+      }
     try {
       setUploading(true);
 
@@ -566,6 +570,10 @@ export default function Sell() {
           Перше фото стане головним у каталозі.
         </p>
 
+        <p className="mb-4 text-sm font-medium text-gray-500">
+          {form.images.length}/8 фотографій
+        </p>
+
         <div className="rounded-2xl border-2 border-dashed border-gray-300 p-8">
           <label className="block cursor-pointer text-center">
 
@@ -585,13 +593,20 @@ export default function Sell() {
               type="file"
               multiple
               accept="image/*"
+              disabled={form.images.length >= 8}
               className="hidden"
+
               onChange={async (e) => {
                 if (!e.target.files) return;
 
-                for (const file of Array.from(
-                  e.target.files
-                )) {
+                const files = Array.from(e.target.files);
+
+                if (form.images.length + files.length > 8) {
+                  toast.error("Можна завантажити максимум 8 фотографій");
+                  return;
+                }
+
+                for (const file of files) {
                   await uploadImage(file);
                 }
               }}
@@ -603,6 +618,12 @@ export default function Sell() {
         {uploading && (
           <div className="mt-4 rounded-xl bg-green-100 p-4 text-center text-green-700">
             Завантаження фотографій...
+          </div>
+        )}
+
+        {form.images.length >= 8 && (
+          <div className="mt-4 rounded-xl bg-yellow-100 p-4 text-center text-yellow-700">
+            Досягнуто максимальної кількості фотографій (8)
           </div>
         )}
 
