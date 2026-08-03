@@ -285,78 +285,51 @@ export default function ProductPage() {
           {user?.uid === product.sellerId ? (
 
             <>
-
-
               <button
-
                 disabled
-
                 className="mt-10 w-full cursor-not-allowed rounded-xl bg-gray-400 px-8 py-4 text-xl font-bold text-white"
-
               >
-
-                🚫 Це ваш товар
-
+                🚫 Це ваше оголошення
               </button>
 
-
-
               <Link
-
                 to={`/edit-product/${product.id}`}
-
                 className="mt-4 block w-full rounded-xl bg-yellow-500 px-8 py-4 text-center text-xl font-bold text-white hover:bg-yellow-600"
-
               >
-
                 ✏️ Редагувати оголошення
-
               </Link>
-
-
             </>
 
+          ) : product.type === "wanted" ? (
+
+            <button
+              onClick={handleChat}
+              className="mt-10 w-full rounded-xl bg-blue-600 px-8 py-4 text-xl font-bold text-white hover:bg-blue-700"
+            >
+              💬 Написати
+            </button>
 
           ) : (
 
-
             <button
-
-              onClick={() =>
-                addToCart(product)
-              }
-
+              onClick={() => addToCart(product)}
               className="mt-10 w-full rounded-xl bg-green-600 px-8 py-4 text-xl font-bold text-white hover:bg-green-700"
-
             >
-
               🛒 Додати у кошик
-
             </button>
-
 
           )}
 
-
-
-
-
           {user &&
-            user.uid !== product.sellerId && (
-
+            user.uid !== product.sellerId &&
+            product.type !== "wanted" && (
 
               <button
-
                 onClick={handleChat}
-
                 className="mt-4 w-full rounded-xl bg-blue-600 px-8 py-4 text-xl font-bold text-white hover:bg-blue-700"
-
               >
-
                 💬 Написати продавцю
-
               </button>
-
 
           )}
 

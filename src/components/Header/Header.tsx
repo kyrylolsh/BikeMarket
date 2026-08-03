@@ -140,6 +140,13 @@ return (
             >
               📅 Події
             </NavLink>
+
+            <NavLink
+              to="/wanted"
+              className="block px-5 py-3 hover:bg-gray-100"
+            >
+              🔎 Куплю
+            </NavLink>
           </div>
         </div>
 
@@ -424,6 +431,14 @@ return (
                                 className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 📅 Велоподії
+                              </NavLink>
+
+                              <NavLink
+                                to="/wanted"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                              >
+                                🔎 Куплю
                               </NavLink>
 
                               <NavLink

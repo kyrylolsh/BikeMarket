@@ -17,11 +17,14 @@ export default function Sell() {
 
   const [form, setForm] = useState({
     name: "",
+
     brand: "",
 
-    type: "" as "" | "bike" | "gear" | "event",
+    type: "" as "" | "bike" | "gear" | "event" | "wanted",
 
     category: "",
+
+    wantedCategory: "" as "" | "bike" | "gear",
 
     condition: "used" as "new" | "used",
 
@@ -32,6 +35,8 @@ export default function Sell() {
     price: "",
 
     eventDate: "",
+
+    negotiable: false,
 
     eventLocation: "",
 
@@ -115,7 +120,10 @@ export default function Sell() {
       return;
     }
 
-    if (form.images.length === 0) {
+    if (
+      form.type !== "wanted" &&
+      form.images.length === 0
+    ) {
       toast.error("Додайте хоча б одне фото");
       return;
     }
@@ -127,12 +135,19 @@ export default function Sell() {
         return;
       }
 
-      if (!form.brand.trim()) {
+      if (
+        form.type !== "wanted" &&
+        !form.brand.trim()
+      ) {
         toast.error("Вкажіть бренд");
         return;
       }
 
-      if (!form.price) {
+      if (
+        form.type !== "event" &&
+        form.type !== "wanted" &&
+        !form.price
+      ) {
         toast.error("Вкажіть ціну");
         return;
       }
@@ -208,6 +223,11 @@ export default function Sell() {
         category:
           form.category,
 
+        wantedCategory:
+              form.type === "wanted"
+                ? form.wantedCategory
+                : "",
+
         condition:
           form.condition,
 
@@ -221,6 +241,11 @@ export default function Sell() {
           form.type === "event"
             ? 0
             : Number(form.price),
+
+        negotiable:
+          form.type === "wanted"
+            ? form.negotiable
+            : false,
 
         eventDate:
           form.type === "event"
@@ -259,7 +284,9 @@ export default function Sell() {
           ? "/bikes"
           : form.type === "gear"
           ? "/bike-parts"
-          : "/events"
+          : form.type === "event"
+          ? "/events"
+          : "/wanted"
       );
 
     } catch (error) {
@@ -303,14 +330,14 @@ export default function Sell() {
 
           const value =
             e.target.value as
-            "" | "bike" | "gear" | "event";
+            "" | "bike" | "gear" | "event" | "wanted";
 
           setForm({
             ...form,
             type: value,
             category: "",
+            wantedCategory: "",
           });
-
         }}
         className="w-full rounded-xl border p-4"
       >
@@ -331,11 +358,15 @@ export default function Sell() {
           📅 Подія
         </option>
 
+        <option value="wanted">
+          🔎 Куплю
+        </option>
+
       </select>
 
     {/* ================= Підкатегорія ================= */}
 
-    {form.type && form.type !== "event" && (
+    {form.type && form.type !== "event" && form.type !== "wanted" && (
 
     <div>
 
@@ -386,6 +417,84 @@ export default function Sell() {
 
     )}
 
+    {form.type === "wanted" && (
+      <div>
+
+        <h2 className="mb-3 mt-5 text-2xl font-bold">
+          Що ви хочете купити?
+        </h2>
+
+        <select
+          value={form.wantedCategory}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              wantedCategory: e.target.value as "bike" | "gear",
+              category: "",
+            })
+          }
+          className="w-full rounded-xl border p-4"
+        >
+          <option value="">
+            Оберіть категорію
+          </option>
+
+          <option value="bike">
+            🚲 Велосипед
+          </option>
+
+          <option value="gear">
+            🛠 Велозапчастина
+          </option>
+
+        </select>
+
+      </div>
+    )}
+
+    {form.type === "wanted" &&
+     form.wantedCategory && (
+
+    <div>
+
+      <h2 className="mb-3 mt-5 text-2xl font-bold">
+        Оберіть підкатегорію
+      </h2>
+
+      <select
+        value={form.category}
+        onChange={(e)=>
+          setForm({
+            ...form,
+            category:e.target.value,
+          })
+        }
+        className="w-full rounded-xl border p-4"
+      >
+
+        <option value="">
+          Оберіть підкатегорію
+        </option>
+
+        {(form.wantedCategory === "bike"
+          ? bikeCategories
+          : partsCategories
+        ).map((item)=>(
+
+          <option
+            key={item}
+            value={item}
+          >
+            {item}
+          </option>
+
+        ))}
+
+      </select>
+
+    </div>
+    )}
+
       </div>
 
 
@@ -406,6 +515,8 @@ export default function Sell() {
               placeholder={
                 form.type === "event"
                   ? "Назва події"
+                  : form.type === "wanted"
+                  ? "Що ви хочете купити?"
                   : "Назва товару"
               }
               value={form.name}
@@ -591,7 +702,7 @@ export default function Sell() {
 
             <input
               type="file"
-              multiple
+              multiple={form.type !== "wanted"}
               accept="image/*"
               disabled={form.images.length >= 8}
               className="hidden"
@@ -606,8 +717,14 @@ export default function Sell() {
                   return;
                 }
 
-                for (const file of files) {
-                  await uploadImage(file);
+
+
+                if (form.type === "wanted") {
+                  await uploadImage(files[0]);
+                } else {
+                  for (const file of files) {
+                    await uploadImage(file);
+                  }
                 }
               }}
             />
@@ -670,11 +787,60 @@ export default function Sell() {
           </div>
         )}
       </div>
-      {/* ====================== Ціна або інформація про подію ====================== */}
 
-      {form.type !== "event" && (
+      {/* ====================== Ціна ====================== */}
+
+      {form.type === "wanted" ? (
 
         <div>
+          <h2 className="mb-2 text-2xl font-bold">
+            💰 Бажана ціна покупки
+          </h2>
+
+          <p className="mb-6 text-gray-500">
+            Вкажіть бажаний бюджет або залиште "договірна".
+          </p>
+
+          <div className="grid gap-4 md:grid-cols-2">
+
+            <input
+              type="number"
+              placeholder="Бюджет (₴)"
+              value={form.price}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  price: e.target.value,
+                })
+              }
+            />
+
+          </div>
+
+          <label className="mt-5 flex items-center gap-3 text-lg">
+
+            <input
+              type="checkbox"
+              checked={form.negotiable}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  negotiable: e.target.checked,
+                })
+              }
+              className="h-5 w-5"
+            />
+
+            Договірна
+
+          </label>
+
+        </div>
+
+      ) : form.type !== "event" && (
+
+        <div>
+
           <h2 className="mb-2 text-2xl font-bold">
             💰 Вартість
           </h2>
@@ -696,7 +862,9 @@ export default function Sell() {
             }
             className="w-full rounded-xl border p-4"
           />
+
         </div>
+
       )}
 
       {/* ====================== Кнопка ====================== */}

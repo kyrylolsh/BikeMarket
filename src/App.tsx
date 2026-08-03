@@ -24,6 +24,7 @@ import Messages from "./pages/Messages";
 import EditProduct from "./pages/EditProduct";
 import Events from "./pages/Events";
 import Search from "./pages/Search";
+import Wanted from "./pages/Wanted";
 
 function App() {
   return (
@@ -55,6 +56,12 @@ function App() {
            path="/events"
            element={<Events />}
           />
+
+          <Route
+          path="/wanted"
+          element={<Wanted />}
+          />
+
 
           <Route
             path="/edit-product/:id"

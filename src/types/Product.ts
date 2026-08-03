@@ -3,11 +3,17 @@ export interface Product {
 
   name: string;
 
-  brand: string;
+  brand?: string;
 
-  type: "bike" | "gear" | "event";
+  type:
+    | "bike"
+    | "gear"
+    | "event"
+    | "wanted";
 
   category: string;
+
+  wantedCategory?: "bike" | "gear";
 
   description: string;
 
@@ -15,7 +21,7 @@ export interface Product {
 
   image: string;
 
-  condition?: "new" | "used";
+  condition?: "new" | "used" | "any";
 
   images: string[];
 
@@ -25,7 +31,6 @@ export interface Product {
 
   sellerNickname?: string;
 
-
   // ===== EVENT =====
 
   eventDate?: string;
@@ -34,6 +39,9 @@ export interface Product {
 
   phone?: string;
 
+  // ===== WANTED =====
+
+  negotiable?: boolean;
 
   createdAt?: any;
 }
