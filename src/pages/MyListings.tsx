@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -12,12 +12,15 @@ export default function MyListings() {
   const [products, setProducts] = useState<Product[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
 
+  const [tab, setTab] = useState<
+    "bike" | "gear" | "event" | "wanted"
+  >("bike");
+
   async function loadProducts() {
     if (!user?.email) return;
 
-    const data = await productService.getUserProducts(
-      user.email
-    );
+    const data =
+      await productService.getUserProducts(user.email);
 
     setProducts(data);
     setPageLoading(false);
@@ -26,6 +29,12 @@ export default function MyListings() {
   useEffect(() => {
     loadProducts();
   }, [user]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(
+      (product) => product.type === tab
+    );
+  }, [products, tab]);
 
   if (loading) {
     return (
@@ -65,6 +74,7 @@ export default function MyListings() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
+
       <div className="mb-10 flex items-center justify-between">
 
         <h1 className="text-4xl font-bold">
@@ -80,35 +90,80 @@ export default function MyListings() {
 
       </div>
 
-      {products.length === 0 ? (
+      {/* Tabs */}
+
+      <div className="mb-8 flex flex-wrap gap-3">
+
+        <button
+          onClick={() => setTab("bike")}
+          className={`rounded-xl px-5 py-3 font-semibold ${
+            tab === "bike"
+              ? "bg-green-600 text-white"
+              : "bg-white shadow"
+          }`}
+        >
+          🚲 Велосипеди
+        </button>
+
+        <button
+          onClick={() => setTab("gear")}
+          className={`rounded-xl px-5 py-3 font-semibold ${
+            tab === "gear"
+              ? "bg-green-600 text-white"
+              : "bg-white shadow"
+          }`}
+        >
+          🛠 Запчастини
+        </button>
+
+        <button
+          onClick={() => setTab("event")}
+          className={`rounded-xl px-5 py-3 font-semibold ${
+            tab === "event"
+              ? "bg-green-600 text-white"
+              : "bg-white shadow"
+          }`}
+        >
+          📅 Події
+        </button>
+
+        <button
+          onClick={() => setTab("wanted")}
+          className={`rounded-xl px-5 py-3 font-semibold ${
+            tab === "wanted"
+              ? "bg-green-600 text-white"
+              : "bg-white shadow"
+          }`}
+        >
+          🔎 Куплю
+        </button>
+
+      </div>
+
+      {filteredProducts.length === 0 ? (
         <div className="rounded-2xl bg-white p-10 text-center shadow">
 
           <h2 className="text-2xl font-bold">
-            У вас ще немає оголошень
+            Тут поки що немає оголошень
           </h2>
-
-          <Link
-            to="/sell"
-            className="mt-6 inline-block rounded-xl bg-green-600 px-6 py-3 font-bold text-white hover:bg-green-700"
-          >
-            Продати велосипед
-          </Link>
 
         </div>
       ) : (
         <div className="space-y-5">
 
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div
               key={product.id}
               className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow md:flex-row md:items-center"
             >
 
-              <img
-                src={product.image}
-                alt={product.name}
-                className="h-36 w-36 rounded-xl object-cover"
-              />
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-36 w-36 rounded-xl object-cover"
+                />
+              )}
 
               <div className="flex-1">
 
@@ -116,17 +171,35 @@ export default function MyListings() {
                   {product.name}
                 </h2>
 
-                <p className="mt-2 text-gray-500">
-                  {product.brand}
-                </p>
+                {product.brand && (
+                  <p className="mt-2 text-gray-500">
+                    {product.brand}
+                  </p>
+                )}
 
                 <p className="mt-2 text-gray-500">
                   {product.category}
                 </p>
 
-                <p className="mt-3 text-3xl font-bold text-green-600">
-                  {product.price.toLocaleString()} ₴
-                </p>
+                {product.type === "event" ? (
+                  <>
+                    <p className="mt-3 text-lg">
+                      📅 {product.eventDate}
+                    </p>
+
+                    <p className="text-lg">
+                      📍 {product.eventLocation}
+                    </p>
+                  </>
+                ) : product.type === "wanted" ? (
+                  <p className="mt-3 text-3xl font-bold text-blue-600">
+                    💰 Бюджет: {product.price.toLocaleString()} ₴
+                  </p>
+                ) : (
+                  <p className="mt-3 text-3xl font-bold text-green-600">
+                    {product.price.toLocaleString()} ₴
+                  </p>
+                )}
 
               </div>
 
@@ -139,10 +212,15 @@ export default function MyListings() {
                   Переглянути
                 </Link>
 
+                <Link
+                  to={`/edit-product/${product.id}`}
+                  className="rounded-lg bg-yellow-500 px-5 py-3 text-white hover:bg-yellow-600"
+                >
+                  Редагувати
+                </Link>
+
                 <button
-                  onClick={() =>
-                    handleDelete(product.id)
-                  }
+                  onClick={() => handleDelete(product.id)}
                   className="rounded-lg bg-red-500 px-5 py-3 text-white hover:bg-red-600"
                 >
                   Видалити
@@ -155,6 +233,7 @@ export default function MyListings() {
 
         </div>
       )}
+
     </div>
   );
 }
