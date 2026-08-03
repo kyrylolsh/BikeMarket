@@ -32,11 +32,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] =
     useState(false);
 
-  const [profileOpen, setProfileOpen] =
-    useState(false);
 
-  const [profileHover, setProfileHover] =
-    useState(false);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -57,9 +53,8 @@ export default function Header() {
 
   async function handleLogout() {
     try {
-      await logout();
+      await logout()
 
-      setProfileOpen(false);
       setMobileOpen(false);
 
       toast.success("Ви вийшли з акаунта");
@@ -204,170 +199,112 @@ return (
                     {/* User */}
 
                     {user ? (
-                      <div
-                        className="relative hidden md:block group"
-                        onMouseEnter={() => setProfileOpen(true)}
-                        onMouseLeave={() => setProfileOpen(false)}
-                      >
-
-                        <button
-                          onClick={() =>
-                            setProfileOpen(!profileOpen)
-                          }
-                          className="flex items-center gap-2 rounded-xl border px-4 py-2 transition hover:bg-gray-50"
-                        >
-
+                      <div className="relative hidden md:block group">
+                        <button className="flex items-center gap-2 rounded-xl border px-4 py-2 transition hover:bg-gray-50">
                           {user.photoURL ? (
-
                             <img
                               src={user.photoURL}
                               alt="avatar"
                               className="h-8 w-8 rounded-full object-cover"
                             />
-
                           ) : (
-
-                            <FiUser />
-
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                              <FiUser />
+                            </div>
                           )}
-
 
                           <span className="hidden lg:block">
                             {user.nickname}
                           </span>
 
-                          <FiChevronDown
-                            className={`transition ${
-                              profileOpen
-                                ? "rotate-180"
-                                : ""
-                            }`}
-                          />
+                          <FiChevronDown className="transition group-hover:rotate-180" />
                         </button>
 
-                        {(profileHover || profileOpen) && (
-                         <div
-                           className={`
-                             absolute
-                             right-0
-                             top-full
-                             mt-2
-                             z-[100]
-                             w-64
-                             overflow-hidden
-                             rounded-2xl
-                             border
-                             bg-white
-                             shadow-2xl
+                        <div
+                          className="
+                            invisible absolute right-0 top-full mt-2
+                            w-64 rounded-2xl border bg-white shadow-2xl
+                            opacity-0 transition-all duration-200
+                            group-hover:visible group-hover:opacity-100
+                            z-[100]
+                          "
+                        >
+                          <div className="flex items-center gap-3 border-b px-5 py-4">
+                            {user.photoURL ? (
+                              <img
+                                src={user.photoURL}
+                                className="h-12 w-12 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                                <FiUser />
+                              </div>
+                            )}
 
-                             transition-all
-                             duration-200
-
-                             ${
-                               profileOpen
-                                 ? "opacity-100 visible translate-y-0"
-                                 : "opacity-0 invisible -translate-y-2"
-                             }
-                           `}
-                         >
-
-                            <div className="flex items-center gap-3 border-b px-5 py-4">
-
-                              {user.photoURL ? (
-
-                                <img
-                                  src={user.photoURL}
-                                  className="h-12 w-12 rounded-full object-cover"
-                                />
-
-                              ) : (
-
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                                  <FiUser />
-                                </div>
-
-                              )}
-
-
-                              <p className="font-semibold">
-                                {user.nickname}
-                              </p>
-
-                            </div>
-
-                            <Link
-                              to="/profile"
-                              onClick={() =>
-                                setProfileOpen(false)
-                              }
-                              className="block px-5 py-3 hover:bg-gray-100"
-                            >
-                              👤 Кабінет
-                            </Link>
-
-                            <Link
-                              to="/orders"
-                              onClick={() =>
-                                setProfileOpen(false)
-                              }
-                              className="block px-5 py-3 hover:bg-gray-100"
-                            >
-                              📦 Мої замовлення
-                            </Link>
-
-                            <NavLink
-                              to="/seller-orders"
-                              onClick={() => setProfileOpen(false)}
-                              className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              <span>🛒 Замовлення клієнтів</span>
-
-                              {newOrders > 0 && (
-                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-                                  {newOrders}
-                                </span>
-                              )}
-                            </NavLink>
-
-                            <Link
-                              to="/my-listings"
-                              onClick={() =>
-                                setProfileOpen(false)
-                              }
-                              className="block px-5 py-3 hover:bg-gray-100"
-                            >
-                              🚲 Мої оголошення
-                            </Link>
-
-                            <NavLink
-                              to="/messages"
-                              onClick={() => setProfileOpen(false)}
-                              className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100"
-                            >
-                              <span>💬 Чат</span>
-
-                              {unreadMessages > 0 && (
-                                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-                                  {unreadMessages}
-                                </span>
-                              )}
-                            </NavLink>
-
-                            <button
-                              onClick={handleLogout}
-                              className="w-full border-t px-5 py-3 text-left text-red-600 transition hover:bg-red-50"
-                            >
-                              🚪 Вийти
-                            </button>
-
+                            <p className="font-semibold">
+                              {user.nickname}
+                            </p>
                           </div>
-                        )}
 
+                          <Link
+                            to="/profile"
+                            className="block px-5 py-3 hover:bg-gray-100"
+                          >
+                            👤 Кабінет
+                          </Link>
+
+                          <Link
+                            to="/orders"
+                            className="block px-5 py-3 hover:bg-gray-100"
+                          >
+                            📦 Мої замовлення
+                          </Link>
+
+                          <NavLink
+                            to="/seller-orders"
+                            className="flex items-center justify-between px-5 py-3 hover:bg-gray-100"
+                          >
+                            <span>🛒 Замовлення клієнтів</span>
+
+                            {newOrders > 0 && (
+                              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
+                                {newOrders}
+                              </span>
+                            )}
+                          </NavLink>
+
+                          <Link
+                            to="/my-listings"
+                            className="block px-5 py-3 hover:bg-gray-100"
+                          >
+                            🚲 Мої оголошення
+                          </Link>
+
+                          <NavLink
+                            to="/messages"
+                            className="flex items-center justify-between px-5 py-3 hover:bg-gray-100"
+                          >
+                            <span>💬 Чат</span>
+
+                            {unreadMessages > 0 && (
+                              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
+                                {unreadMessages}
+                              </span>
+                            )}
+                          </NavLink>
+
+                          <button
+                            onClick={handleLogout}
+                            className="w-full border-t px-5 py-3 text-left text-red-600 hover:bg-red-50"
+                          >
+                            🚪 Вийти
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <Link
                         to="/register"
-                        className="hidden rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700 md:block"
+                        className="hidden rounded-xl bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-700 md:block"
                       >
                         Реєстрація
                       </Link>

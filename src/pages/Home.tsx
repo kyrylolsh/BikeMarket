@@ -49,6 +49,13 @@ export default function Home() {
             📅 Переглянути велоподії
           </Link>
 
+          <Link
+            to="/wanted"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+          >
+            🔎 Переглянути "Куплю"
+          </Link>
+
         </div>
 
       </section>
