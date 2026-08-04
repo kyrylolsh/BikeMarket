@@ -67,6 +67,10 @@ export default function ProductCard({
               ? "Договірна"
               : `${Number(product.price).toLocaleString()} ₴`}
           </p>
+        ) : product.type === "exchange" ? (
+          <p className="mt-4 text-lg font-semibold text-indigo-600">
+            🔄 Обмін
+          </p>
         ) : product.type === "event" ? (
           <p className="mt-4 text-lg font-semibold text-orange-600">
             📅 Велоподія
@@ -77,22 +81,6 @@ export default function ProductCard({
           </p>
         )}
 
-        {/* Обране */}
-        <button
-          onClick={() =>
-            favorite
-              ? removeFromFavorites(product.id)
-              : addToFavorites(product)
-          }
-          className={`mt-5 w-full rounded-xl border py-3 font-semibold transition ${
-            favorite
-              ? "border-red-500 bg-red-500 text-white"
-              : "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-          }`}
-        >
-          <FiHeart className="mr-2 inline" />
-          {favorite ? "В обраному" : "Додати в обране"}
-        </button>
 
         {/* Кнопка */}
         {product.type === "wanted" ? (
@@ -101,6 +89,13 @@ export default function ProductCard({
             className="mt-3 block w-full rounded-xl bg-blue-600 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
           >
             Переглянути
+          </Link>
+        ) : product.type === "exchange" ? (
+          <Link
+            to={`/product/${product.id}`}
+            className="mt-3 block w-full rounded-xl bg-blue-600 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+          >
+            🔄 Запропонувати обмін
           </Link>
         ) : (
           <button

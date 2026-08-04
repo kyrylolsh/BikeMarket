@@ -142,6 +142,13 @@ return (
             >
               🔎 Куплю
             </NavLink>
+
+            <NavLink
+              to="/exchange"
+              className="block px-5 py-3 hover:bg-gray-100"
+            >
+              🔄 Обмін
+            </NavLink>
           </div>
         </div>
 
@@ -376,6 +383,14 @@ return (
                                 className="block rounded-xl px-3 py-2 hover:bg-gray-100"
                               >
                                 🔎 Куплю
+                              </NavLink>
+
+                              <NavLink
+                                to="/exchange"
+                                onClick={() => setMobileOpen(false)}
+                                className="block rounded-xl px-3 py-2 hover:bg-gray-100"
+                              >
+                                🔄 Обмін
                               </NavLink>
 
                               <NavLink

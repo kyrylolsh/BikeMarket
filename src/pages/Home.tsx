@@ -56,6 +56,13 @@ export default function Home() {
             🔎 Переглянути "Куплю"
           </Link>
 
+          <Link
+             to="/exchange"
+             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+          >
+             🔎 Переглянути "Обмін"
+          </Link>
+
         </div>
 
       </section>

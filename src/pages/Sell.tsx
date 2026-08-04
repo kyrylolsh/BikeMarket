@@ -20,7 +20,13 @@ export default function Sell() {
 
     brand: "",
 
-    type: "" as "" | "bike" | "gear" | "event" | "wanted",
+    type: "" as
+      | ""
+      | "bike"
+      | "gear"
+      | "event"
+      | "wanted"
+      | "exchange",
 
     category: "",
 
@@ -29,6 +35,8 @@ export default function Sell() {
     condition: "used" as "new" | "used",
 
     description: "",
+
+    exchangeFor: "",
 
     images: [] as string[],
 
@@ -146,12 +154,13 @@ export default function Sell() {
       if (
         form.type !== "event" &&
         form.type !== "wanted" &&
+        form.type !== "exchange" &&
         !form.price
       ) {
         toast.error("Вкажіть ціну");
         return;
       }
-    }
+  }
 
     // Для подій
     if (form.type === "event") {
@@ -218,6 +227,11 @@ export default function Sell() {
         description:
           form.description.trim(),
 
+        exchangeFor:
+          form.type === "exchange"
+            ? form.exchangeFor.trim()
+            : "",
+
         type: form.type,
 
         category:
@@ -238,7 +252,8 @@ export default function Sell() {
           form.images,
 
         price:
-          form.type === "event"
+          form.type === "event" ||
+          form.type === "exchange"
             ? 0
             : Number(form.price),
 
@@ -286,6 +301,8 @@ export default function Sell() {
           ? "/bike-parts"
           : form.type === "event"
           ? "/events"
+          : form.type === "exchange"
+          ? "/exchange"
           : "/wanted"
       );
 
@@ -330,7 +347,12 @@ export default function Sell() {
 
           const value =
             e.target.value as
-            "" | "bike" | "gear" | "event" | "wanted";
+            | ""
+            | "bike"
+            | "gear"
+            | "event"
+            | "wanted"
+            | "exchange";
 
           setForm({
             ...form,
@@ -362,11 +384,18 @@ export default function Sell() {
           🔎 Куплю
         </option>
 
+        <option value="exchange">
+          🔄 Обмін
+        </option>
+
       </select>
 
     {/* ================= Підкатегорія ================= */}
 
-    {form.type && form.type !== "event" && form.type !== "wanted" && (
+    {form.type &&
+     form.type !== "event" &&
+     form.type !== "wanted" &&
+     form.type !== "exchange" && (
 
     <div>
 
@@ -452,7 +481,46 @@ export default function Sell() {
       </div>
     )}
 
-    {form.type === "wanted" &&
+    {form.type === "exchange" && (
+
+    <div>
+
+    <h2 className="mb-3 mt-5 text-2xl font-bold">
+    Що ви хочете обміняти?
+    </h2>
+
+    <select
+    value={form.wantedCategory}
+    onChange={(e)=>
+    setForm({
+    ...form,
+    wantedCategory:e.target.value as "bike" | "gear",
+    category:"",
+    })
+    }
+    className="w-full rounded-xl border p-4"
+    >
+
+    <option value="">
+    Оберіть категорію
+    </option>
+
+    <option value="bike">
+    🚲 Велосипед
+    </option>
+
+    <option value="gear">
+    🛠 Велозапчастина
+    </option>
+
+    </select>
+
+    </div>
+
+    )}
+
+    {(form.type === "wanted" ||
+      form.type === "exchange") &&
      form.wantedCategory && (
 
     <div>
@@ -537,7 +605,8 @@ export default function Sell() {
 
 
 
-            {form.type !== "event" && (
+            {form.type !== "event" &&
+             form.type !== "wanted" && (
               <>
                 <input
                   type="text"
@@ -702,7 +771,7 @@ export default function Sell() {
 
             <input
               type="file"
-              multiple={form.type !== "wanted"}
+              multiple={form.type !== "wanted" || form.type === "exchange"}
               accept="image/*"
               disabled={form.images.length >= 8}
               className="hidden"
@@ -837,7 +906,8 @@ export default function Sell() {
 
         </div>
 
-      ) : form.type !== "event" && (
+      ) : form.type !== "event" &&
+           form.type !== "exchange" && (
 
         <div>
 
@@ -866,6 +936,31 @@ export default function Sell() {
         </div>
 
       )}
+
+    {form.type === "exchange" && (
+
+    <div>
+
+    <h2 className="mb-2 text-2xl font-bold">
+    🔄 Що хочете отримати взамін?
+    </h2>
+
+    <textarea
+      rows={4}
+      placeholder="Наприклад: Trek Marlin 8 або Shimano XT..."
+      value={form.exchangeFor}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          exchangeFor: e.target.value,
+        })
+      }
+      className="w-full rounded-xl border p-4"
+    />
+
+    </div>
+
+    )}
 
       {/* ====================== Кнопка ====================== */}
 

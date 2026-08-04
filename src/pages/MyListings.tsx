@@ -13,7 +13,7 @@ export default function MyListings() {
   const [pageLoading, setPageLoading] = useState(true);
 
   const [tab, setTab] = useState<
-    "bike" | "gear" | "event" | "wanted"
+    "bike" | "gear" | "exchange" | "event" | "wanted"
   >("bike");
 
   async function loadProducts() {
@@ -138,6 +138,17 @@ export default function MyListings() {
           🔎 Куплю
         </button>
 
+        <button
+          onClick={() => setTab("exchange")}
+          className={`rounded-xl px-5 py-3 font-semibold ${
+            tab === "exchange"
+              ? "bg-green-600 text-white"
+              : "bg-white shadow"
+          }`}
+        >
+          🔄 Обмін
+        </button>
+
       </div>
 
       {filteredProducts.length === 0 ? (
@@ -191,6 +202,18 @@ export default function MyListings() {
                       📍 {product.eventLocation}
                     </p>
                   </>
+                ) : product.type === "exchange" ? (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-2xl font-bold text-blue-600">
+                      🔄 Обмін
+                    </p>
+
+                    <p className="text-gray-600">
+                      Категорія:
+                      {" "}
+                      <b>{product.category}</b>
+                    </p>
+                  </div>
                 ) : product.type === "wanted" ? (
                   <p className="mt-3 text-3xl font-bold text-blue-600">
                     💰 Бюджет: {product.price.toLocaleString()} ₴

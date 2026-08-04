@@ -199,9 +199,11 @@ export default function ProductPage() {
         <div>
 
 
-          <p className="text-lg text-gray-500">
-            {product.brand}
-          </p>
+          {product.brand && (
+            <p className="text-lg text-gray-500">
+              {product.brand}
+            </p>
+          )}
 
 
           <h1 className="mt-2 text-5xl font-bold">
@@ -212,6 +214,19 @@ export default function ProductPage() {
           <p className="mt-6 text-lg leading-8 text-gray-600">
             {product.description}
           </p>
+
+          {product.type === "exchange" &&
+           product.exchangeFor && (
+            <div className="mt-6 rounded-2xl bg-blue-50 p-5 border border-blue-200">
+              <h3 className="text-xl font-bold text-blue-700">
+                🔄 Хочу отримати в обмін
+              </h3>
+
+              <p className="mt-3 text-lg text-gray-700">
+                {product.exchangeFor}
+              </p>
+            </div>
+          )}
 
 
 
@@ -272,11 +287,17 @@ export default function ProductPage() {
 
 
 
-          <p className="mt-8 text-5xl font-bold text-green-600">
-
-            {product.price.toLocaleString()} ₴
-
-          </p>
+         {product.type === "exchange" ? (
+           <div className="mt-8 rounded-2xl bg-blue-50 p-5">
+             <p className="text-3xl font-bold text-blue-600">
+               🔄 Обмін
+             </p>
+           </div>
+         ) : (
+           <p className="mt-8 text-5xl font-bold text-green-600">
+             {product.price.toLocaleString()} ₴
+           </p>
+         )}
 
 
 
@@ -309,6 +330,15 @@ export default function ProductPage() {
               💬 Написати
             </button>
 
+          ) : product.type === "exchange" ? (
+
+            <button
+              onClick={handleChat}
+              className="mt-10 w-full rounded-xl bg-blue-600 px-8 py-4 text-xl font-bold text-white hover:bg-blue-700"
+            >
+              🔄 Запропонувати обмін
+            </button>
+
           ) : (
 
             <button
@@ -322,7 +352,8 @@ export default function ProductPage() {
 
           {user &&
             user.uid !== product.sellerId &&
-            product.type !== "wanted" && (
+            product.type !== "wanted" &&
+            product.type !== "exchange" && (
 
               <button
                 onClick={handleChat}

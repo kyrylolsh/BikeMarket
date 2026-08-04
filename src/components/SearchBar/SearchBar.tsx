@@ -2,18 +2,41 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
-export default function SearchBar() {
+interface SearchBarProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+}
+
+export default function SearchBar({
+  value,
+  onChange,
+  placeholder = "Пошук...",
+}: SearchBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [search, setSearch] = useState("");
+  const [internalSearch, setInternalSearch] = useState("");
 
-  function handleChange(value: string) {
-    setSearch(value);
+  const search =
+    value !== undefined ? value : internalSearch;
 
-    const query = value.trim();
+  function handleChange(newValue: string) {
+    // ============================
+    // Локальний пошук (Catalog, Bikes, Parts, Wanted, Exchange)
+    // ============================
+    if (onChange) {
+      onChange(newValue);
+      return;
+    }
 
-    // якщо очистили поле
+    // ============================
+    // Глобальний пошук (Header)
+    // ============================
+    setInternalSearch(newValue);
+
+    const query = newValue.trim();
+
     if (!query) {
       if (location.pathname === "/search") {
         navigate("/", { replace: true });
@@ -21,9 +44,10 @@ export default function SearchBar() {
       return;
     }
 
-    // переходимо тільки якщо ще не на сторінці пошуку
     if (location.pathname !== "/search") {
-      navigate(`/search?query=${encodeURIComponent(query)}`);
+      navigate(
+        `/search?query=${encodeURIComponent(query)}`
+      );
     } else {
       navigate(
         `/search?query=${encodeURIComponent(query)}`,
@@ -38,9 +62,11 @@ export default function SearchBar() {
 
       <input
         className="ml-3 w-full outline-none"
-        placeholder="Пошук..."
+        placeholder={placeholder}
         value={search}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={(e) =>
+          handleChange(e.target.value)
+        }
       />
     </div>
   );

@@ -9,7 +9,8 @@ export interface Product {
     | "bike"
     | "gear"
     | "event"
-    | "wanted";
+    | "wanted"
+    | "exchange";
 
   category: string;
 
@@ -42,6 +43,12 @@ export interface Product {
   // ===== WANTED =====
 
   negotiable?: boolean;
+
+  // ===== EXCHANGE =====
+
+  exchangeFor?: string;      // що хоче отримати
+  exchangeCategory?: "bike" | "gear";
+  exchangePossible?: boolean;
 
   createdAt?: any;
 }
