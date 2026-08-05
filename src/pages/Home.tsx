@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
-import ProductCard from "../components/ProductCard/ProductCard";
-import { useProducts } from "../hooks/useProducts";
+
 import Loader from "../components/Loader/Loader";
+import ProductCard from "../components/ProductCard/ProductCard";
+
+import { useProducts } from "../hooks/useProducts";
+import type { Product } from "../types/Product";
 
 export default function Home() {
   const { products, loading } = useProducts();
@@ -10,13 +13,36 @@ export default function Home() {
     return <Loader />;
   }
 
+  const getPopularityScore = (product: Product) => {
+    return (
+      (product.views ?? 0) * 2 +
+      (product.likes ?? 0) * 15
+    );
+  };
+
+  const popularBikes = [...products]
+    .filter((p) => p.type === "bike")
+    .sort(
+      (a, b) =>
+        getPopularityScore(b) -
+        getPopularityScore(a)
+    )
+    .slice(0, 4);
+
+  const popularGear = [...products]
+    .filter((p) => p.type === "gear")
+    .sort(
+      (a, b) =>
+        getPopularityScore(b) -
+        getPopularityScore(a)
+    )
+    .slice(0, 4);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-
       {/* Hero */}
 
       <section className="rounded-3xl bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-14 lg:py-20">
-
         <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
           BikeMarket
         </h1>
@@ -27,7 +53,6 @@ export default function Home() {
         </p>
 
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-
           <Link
             to="/bikes"
             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
@@ -57,43 +82,78 @@ export default function Home() {
           </Link>
 
           <Link
-             to="/exchange"
-             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
+            to="/exchange"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
           >
-             🔎 Переглянути "Обмін"
+            🔄 Переглянути "Обмін"
           </Link>
-
         </div>
-
       </section>
 
-      {/* Products */}
+      {/* Найпопулярніші велосипеди */}
 
-      <section className="mt-12 sm:mt-16 lg:mt-20">
+      <section className="mt-16">
+        <h2 className="mb-8 text-3xl font-bold">
+          🔥 Найпопулярніші велосипеди
+        </h2>
 
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {popularBikes.length > 0 ? (
+            popularBikes.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))
+          ) : (
+            <p className="text-gray-500">
+              Велосипедів ще немає
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Найпопулярніше спорядження */}
+
+      <section className="mt-16">
+        <h2 className="mb-8 text-3xl font-bold">
+          ❤️ Найпопулярніше спорядження
+        </h2>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {popularGear.length > 0 ? (
+            popularGear.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+            ))
+          ) : (
+            <p className="text-gray-500">
+              Спорядження ще немає
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Всі оголошення */}
+
+      <section className="mt-20">
         <div className="mb-8 flex items-center justify-between">
-
           <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
-            Популярні оголошення
+            Усі оголошення
           </h2>
-
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-
           {products.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
             />
           ))}
-
         </div>
-
-
-
       </section>
-
     </div>
   );
 }

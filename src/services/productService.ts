@@ -12,6 +12,7 @@ import {
 
 import { db } from "../firebase";
 import type { Product } from "../types/Product";
+import { increment } from "firebase/firestore";
 
 export const productService = {
   async getAll(): Promise<Product[]> {
@@ -49,6 +50,7 @@ export const productService = {
         ...product,
         likes: product.likes ?? 0,
         likedBy: product.likedBy ?? [],
+        views: product.views ?? 0,
       }
     );
   },
@@ -106,14 +108,13 @@ export const productService = {
   // ==========================
   // ❤️ Лайки
   // ==========================
+
   async toggleLike(
     product: Product,
     uid: string
   ): Promise<void> {
-
     const ref = doc(db, "products", product.id);
 
-    // Завжди беремо актуальні дані з Firebase
     const snapshot = await getDoc(ref);
 
     if (!snapshot.exists()) return;
@@ -122,15 +123,30 @@ export const productService = {
 
     const likedBy = data.likedBy ?? [];
 
-    const alreadyLiked = likedBy.includes(uid);
+    const alreadyLiked =
+      likedBy.includes(uid);
 
     const newLikedBy = alreadyLiked
-      ? likedBy.filter((id) => id !== uid)
+      ? likedBy.filter(
+          (id) => id !== uid
+        )
       : [...likedBy, uid];
 
     await updateDoc(ref, {
       likedBy: newLikedBy,
       likes: newLikedBy.length,
+    });
+  },
+
+  // ==========================
+  // 👀 Перегляди
+  // ==========================
+
+  async incrementViews(id: string): Promise<void> {
+    const ref = doc(db, "products", id);
+
+    await updateDoc(ref, {
+      views: increment(1),
     });
   },
 };

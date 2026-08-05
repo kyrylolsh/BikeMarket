@@ -67,6 +67,21 @@ export default function ProductPage() {
     return () => unsubscribe();
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const key = `viewed_${id}`;
+    const lastView = localStorage.getItem(key);
+
+    const now = Date.now();
+    const DAY = 1000 * 60 * 60 * 24;
+
+    if (!lastView || now - Number(lastView) > DAY) {
+      productService.incrementViews(id);
+      localStorage.setItem(key, now.toString());
+    }
+  }, [id]);
+
 
   async function handleChat() {
     if (!product) return;
@@ -306,9 +321,15 @@ export default function ProductPage() {
              </p>
            </div>
          ) : (
-           <p className="mt-8 text-5xl font-bold text-green-600">
-             {product.price.toLocaleString()} ₴
-           </p>
+           <>
+             <p className="mt-8 text-5xl font-bold text-green-600">
+               {product.price.toLocaleString()} ₴
+             </p>
+
+             <p className="mt-3 text-lg text-gray-500">
+               👀 {product.views ?? 0} переглядів
+             </p>
+           </>
          )}
 
 
