@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Loader from "../components/Loader/Loader";
@@ -8,6 +9,14 @@ import type { Product } from "../types/Product";
 
 export default function Home() {
   const { products, loading } = useProducts();
+
+  const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (products.length > 0 && sortedProducts.length === 0) {
+      setSortedProducts(products);
+    }
+  }, [products, sortedProducts.length]);
 
   if (loading) {
     return <Loader />;
@@ -20,7 +29,7 @@ export default function Home() {
     );
   };
 
-  const popularBikes = [...products]
+  const popularBikes = [...sortedProducts]
     .filter((p) => p.type === "bike")
     .sort(
       (a, b) =>
@@ -29,7 +38,7 @@ export default function Home() {
     )
     .slice(0, 4);
 
-  const popularGear = [...products]
+  const popularGear = [...sortedProducts]
     .filter((p) => p.type === "gear")
     .sort(
       (a, b) =>
@@ -40,9 +49,10 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-      {/* Hero */}
 
+      {/* Hero */}
       <section className="rounded-3xl bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-14 lg:py-20">
+
         <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
           BikeMarket
         </h1>
@@ -53,6 +63,7 @@ export default function Home() {
         </p>
 
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+
           <Link
             to="/bikes"
             className="inline-flex w-full items-center justify-center rounded-xl bg-white px-8 py-4 text-lg font-bold text-green-600 shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:w-auto"
@@ -87,11 +98,11 @@ export default function Home() {
           >
             🔄 Переглянути "Обмін"
           </Link>
+
         </div>
       </section>
 
       {/* Найпопулярніші велосипеди */}
-
       <section className="mt-16">
         <h2 className="mb-8 text-3xl font-bold">
           🔥 Найпопулярніші велосипеди
@@ -114,7 +125,6 @@ export default function Home() {
       </section>
 
       {/* Найпопулярніше спорядження */}
-
       <section className="mt-16">
         <h2 className="mb-8 text-3xl font-bold">
           ❤️ Найпопулярніше спорядження
@@ -137,7 +147,6 @@ export default function Home() {
       </section>
 
       {/* Всі оголошення */}
-
       <section className="mt-20">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
@@ -146,7 +155,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          {products.map((product) => (
+          {sortedProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -154,6 +163,7 @@ export default function Home() {
           ))}
         </div>
       </section>
+
     </div>
   );
 }

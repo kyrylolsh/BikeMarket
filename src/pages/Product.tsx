@@ -321,15 +321,29 @@ export default function ProductPage() {
              </p>
            </div>
          ) : (
-           <>
-             <p className="mt-8 text-5xl font-bold text-green-600">
+           <div className="mt-8 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+             <p className="text-5xl font-bold text-green-600">
                {product.price.toLocaleString()} ₴
              </p>
 
-             <p className="mt-3 text-lg text-gray-500">
-               👀 {product.views ?? 0} переглядів
-             </p>
-           </>
+             <div className="flex w-fit items-center gap-4 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
+               <div className="flex items-center gap-1">
+                 <span className="text-red-500 text-xl">❤️</span>
+                 <span className="font-semibold">
+                   {product.likes ?? 0}
+                 </span>
+               </div>
+
+               <div className="h-5 w-px bg-gray-300" />
+
+               <div className="flex items-center gap-1">
+                 <span className="text-lg">👁️</span>
+                 <span className="font-semibold">
+                   {product.views ?? 0}
+                 </span>
+               </div>
+             </div>
+           </div>
          )}
 
 
