@@ -284,6 +284,10 @@ export default function Sell() {
 
         sellerNickname: user.nickname,
 
+        likes: 0,
+
+        likedBy: [],
+
         createdAt: new Date(),
 
       });

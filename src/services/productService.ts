@@ -45,7 +45,11 @@ export const productService = {
   ): Promise<void> {
     await addDoc(
       collection(db, "products"),
-      product
+      {
+        ...product,
+        likes: product.likes ?? 0,
+        likedBy: product.likedBy ?? [],
+      }
     );
   },
 
@@ -97,5 +101,36 @@ export const productService = {
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+  },
+
+  // ==========================
+  // ❤️ Лайки
+  // ==========================
+  async toggleLike(
+    product: Product,
+    uid: string
+  ): Promise<void> {
+
+    const ref = doc(db, "products", product.id);
+
+    // Завжди беремо актуальні дані з Firebase
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists()) return;
+
+    const data = snapshot.data() as Product;
+
+    const likedBy = data.likedBy ?? [];
+
+    const alreadyLiked = likedBy.includes(uid);
+
+    const newLikedBy = alreadyLiked
+      ? likedBy.filter((id) => id !== uid)
+      : [...likedBy, uid];
+
+    await updateDoc(ref, {
+      likedBy: newLikedBy,
+      likes: newLikedBy.length,
+    });
   },
 };

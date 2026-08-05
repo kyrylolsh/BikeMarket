@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { FiHeart } from "react-icons/fi";
 
 import type { Product } from "../../types/Product";
+
+import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
 
@@ -12,47 +14,68 @@ interface ProductCardProps {
 export default function ProductCard({
   product,
 }: ProductCardProps) {
+  const { user } = useAuth();
+
   const { addToCart } = useCart();
 
   const {
     addToFavorites,
     removeFromFavorites,
-    isFavorite,
   } = useFavorites();
 
-  const favorite = isFavorite(product.id);
+  const favorite =
+    !!user &&
+    (product.likedBy ?? []).includes(user.uid);
+
+  async function handleFavorite() {
+    if (!user) return;
+
+    if (favorite) {
+      await removeFromFavorites(product);
+    } else {
+      await addToFavorites(product);
+    }
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-lg transition hover:-translate-y-2 hover:shadow-2xl">
-      <Link to={`/product/${product.id}`}>
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-60 w-full object-cover"
-        />
-      </Link>
+
+      {/* Фото */}
+      <div className="relative">
+        <Link to={`/product/${product.id}`}>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-60 w-full object-cover"
+          />
+        </Link>
+
+        {/* Бейдж лайків */}
+        <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 shadow-lg backdrop-blur-sm">
+          <FiHeart className="text-red-500" size={18} />
+          <span className="font-semibold text-gray-800">
+            {product.likes ?? 0}
+          </span>
+        </div>
+      </div>
 
       <div className="p-5">
-        {/* Бренд */}
         {product.brand && (
           <p className="text-sm text-gray-500">
             {product.brand}
           </p>
         )}
 
-        {/* Назва */}
         <Link to={`/product/${product.id}`}>
           <h2 className="mt-2 text-xl font-bold hover:text-green-600">
             {product.name}
           </h2>
         </Link>
 
-        {/* Категорія */}
         <p className="mt-2 text-gray-600">
           {product.category}
         </p>
 
-        {/* Автор */}
         <p className="mt-3 text-sm text-gray-500">
           {product.type === "wanted"
             ? `🔎 Шукає: ${product.sellerNickname ?? "Користувач"}`
@@ -62,7 +85,7 @@ export default function ProductCard({
         {/* Ціна */}
         {product.type === "wanted" ? (
           <p className="mt-4 text-2xl font-bold text-blue-600">
-            💰 Бюджет:{" "}
+            💰 Бюджет{" "}
             {product.negotiable
               ? "Договірна"
               : `${Number(product.price).toLocaleString()} ₴`}
@@ -81,8 +104,22 @@ export default function ProductCard({
           </p>
         )}
 
+        {/* Обране */}
+        <button
+          onClick={handleFavorite}
+          className={`mt-5 w-full rounded-xl border py-3 font-semibold transition ${
+            favorite
+              ? "border-red-500 bg-red-500 text-white"
+              : "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+          }`}
+        >
+          <FiHeart className="mr-2 inline" />
+          {favorite
+            ? "В обраному"
+            : "Додати в обране"}
+        </button>
 
-        {/* Кнопка */}
+        {/* Основна кнопка */}
         {product.type === "wanted" ? (
           <Link
             to={`/product/${product.id}`}
@@ -102,7 +139,7 @@ export default function ProductCard({
             onClick={() => addToCart(product)}
             className="mt-3 w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700"
           >
-            Купити
+            🛒 Купити
           </button>
         )}
       </div>

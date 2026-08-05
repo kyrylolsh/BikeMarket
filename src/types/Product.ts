@@ -46,9 +46,14 @@ export interface Product {
 
   // ===== EXCHANGE =====
 
-  exchangeFor?: string;      // що хоче отримати
+  exchangeFor?: string;
   exchangeCategory?: "bike" | "gear";
   exchangePossible?: boolean;
+
+  // ===== LIKES =====
+
+  likes?: number;
+  likedBy?: string[];
 
   createdAt?: any;
 }

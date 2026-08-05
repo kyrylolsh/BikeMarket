@@ -32,27 +32,34 @@ export default function ProductPage() {
     useState("");
 
   useEffect(() => {
+    if (!id) return;
+
+    let mounted = true;
+
     async function loadProduct() {
-      const data =
-        await productService.getById(id!);
+      const data = await productService.getById(id);
 
-      if (data) {
-        setProduct(data);
+      if (!mounted || !data) return;
 
-        if (
-          data.images &&
-          data.images.length > 0
-        ) {
-          setSelectedImage(data.images[0]);
-        } else {
-          setSelectedImage(data.image);
-        }
-      }
+      setProduct(data);
+
+      setSelectedImage(
+        data.images?.length
+          ? data.images[0]
+          : data.image
+      );
 
       setLoading(false);
     }
 
     loadProduct();
+
+    const timer = setInterval(loadProduct, 1000);
+
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
   }, [id]);
 
 

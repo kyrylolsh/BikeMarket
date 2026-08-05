@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { onSnapshot, collection } from "firebase/firestore";
 
-import { productService } from "../services/productService";
+import { db } from "../firebase";
 import type { Product } from "../types/Product";
 
 export function useProducts() {
@@ -8,10 +9,24 @@ export function useProducts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    productService.getAll().then((data) => {
-      setProducts(data);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      collection(db, "products"),
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Product[];
+
+        data.sort(
+          (a, b) => (b.likes ?? 0) - (a.likes ?? 0)
+        );
+
+        setProducts(data);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
   return {

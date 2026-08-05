@@ -1,23 +1,30 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
+  useMemo,
 } from "react";
 
 import toast from "react-hot-toast";
 
 import type { Product } from "../types/Product";
+import { productService } from "../services/productService";
 import { useAuth } from "./AuthContext";
+import { useProducts } from "../hooks/useProducts";
 
 interface FavoritesContextType {
   favorites: Product[];
 
-  addToFavorites: (product: Product) => void;
+  addToFavorites: (
+    product: Product
+  ) => Promise<void>;
 
-  removeFromFavorites: (id: string) => void;
+  removeFromFavorites: (
+    product: Product
+  ) => Promise<void>;
 
-  isFavorite: (id: string) => boolean;
+  isFavorite: (
+    product: Product
+  ) => boolean;
 
   clearFavorites: () => void;
 }
@@ -33,33 +40,19 @@ export function FavoritesProvider({
 }) {
   const { user } = useAuth();
 
-  const [favorites, setFavorites] = useState<Product[]>([]);
+  const { products } = useProducts();
 
-  // Завантаження обраного конкретного користувача
-  useEffect(() => {
-    if (!user) {
-      setFavorites([]);
-      return;
-    }
+  const favorites = useMemo(() => {
+    if (!user) return [];
 
-    const saved = localStorage.getItem(
-      `favorites_${user.uid}`
+    return products.filter((product) =>
+      product.likedBy?.includes(user.uid)
     );
+  }, [products, user]);
 
-    setFavorites(saved ? JSON.parse(saved) : []);
-  }, [user]);
-
-  // Збереження
-  useEffect(() => {
-    if (!user) return;
-
-    localStorage.setItem(
-      `favorites_${user.uid}`,
-      JSON.stringify(favorites)
-    );
-  }, [favorites, user]);
-
-  function addToFavorites(product: Product) {
+  async function addToFavorites(
+    product: Product
+  ) {
     if (!user) {
       toast.error(
         "Увійдіть в акаунт, щоб додати товар в обране"
@@ -67,42 +60,69 @@ export function FavoritesProvider({
       return;
     }
 
-    setFavorites((prev) => {
-      const exists = prev.some(
-        (item) => item.id === product.id
-      );
+    if (
+      product.likedBy?.includes(user.uid)
+    ) {
+      toast("Товар вже в обраному");
+      return;
+    }
 
-      if (exists) {
-        toast("Товар вже в обраному");
-        return prev;
-      }
+    try {
+      await productService.toggleLike(
+        product,
+        user.uid
+      );
 
       toast.success(
         `${product.name} додано в обране`
       );
+    } catch (error) {
+      console.error(error);
 
-      return [...prev, product];
-    });
+      toast.error(
+        "Не вдалося додати в обране"
+      );
+    }
   }
 
-  function removeFromFavorites(id: string) {
-    setFavorites((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
+  async function removeFromFavorites(
+    product: Product
+  ) {
+    if (!user) return;
 
-    toast.success(
-      "Товар видалено з обраного"
-    );
+    try {
+      await productService.toggleLike(
+        product,
+        user.uid
+      );
+
+      toast.success(
+        "Товар видалено з обраного"
+      );
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        "Не вдалося видалити з обраного"
+      );
+    }
   }
 
-  function isFavorite(id: string) {
-    return favorites.some(
-      (item) => item.id === id
+  function isFavorite(
+    product: Product
+  ) {
+    if (!user) return false;
+
+    return (
+      product.likedBy?.includes(
+        user.uid
+      ) ?? false
     );
   }
 
   function clearFavorites() {
-    setFavorites([]);
+    // Нічого не робимо.
+    // Список автоматично формується з Firebase.
   }
 
   return (
