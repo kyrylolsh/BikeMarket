@@ -4,8 +4,12 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+import {
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import toast from "react-hot-toast";
-
 import Loader from "../components/Loader/Loader";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -34,32 +38,33 @@ export default function ProductPage() {
   useEffect(() => {
     if (!id) return;
 
-    let mounted = true;
+    const unsubscribe = onSnapshot(
+      doc(db, "products", id),
+      (snapshot) => {
+        if (!snapshot.exists()) {
+          setLoading(false);
+          return;
+        }
 
-    async function loadProduct() {
-      const data = await productService.getById(id);
+        const data = {
+          id: snapshot.id,
+          ...snapshot.data(),
+        } as Product;
 
-      if (!mounted || !data) return;
+        setProduct(data);
 
-      setProduct(data);
+        setSelectedImage((prev) =>
+          prev ||
+          (data.images?.length
+            ? data.images[0]
+            : data.image)
+        );
 
-      setSelectedImage(
-        data.images?.length
-          ? data.images[0]
-          : data.image
-      );
+        setLoading(false);
+      }
+    );
 
-      setLoading(false);
-    }
-
-    loadProduct();
-
-    const timer = setInterval(loadProduct, 1000);
-
-    return () => {
-      mounted = false;
-      clearInterval(timer);
-    };
+    return () => unsubscribe();
   }, [id]);
 
 

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, collection } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
 
 import { db } from "../firebase";
 import type { Product } from "../types/Product";
@@ -16,10 +19,6 @@ export function useProducts() {
           id: doc.id,
           ...doc.data(),
         })) as Product[];
-
-        data.sort(
-          (a, b) => (b.likes ?? 0) - (a.likes ?? 0)
-        );
 
         setProducts(data);
         setLoading(false);

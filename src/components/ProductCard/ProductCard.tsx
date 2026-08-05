@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiHeart } from "react-icons/fi";
 
@@ -27,8 +28,16 @@ export default function ProductCard({
     !!user &&
     (product.likedBy ?? []).includes(user.uid);
 
+  const [pulse, setPulse] = useState(false);
+
   async function handleFavorite() {
     if (!user) return;
+
+    setPulse(true);
+
+    setTimeout(() => {
+      setPulse(false);
+    }, 300);
 
     if (favorite) {
       await removeFromFavorites(product);
@@ -51,8 +60,16 @@ export default function ProductCard({
         </Link>
 
         {/* Бейдж лайків */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 shadow-lg backdrop-blur-sm">
-          <FiHeart className="text-red-500" size={18} />
+        <div
+          className={`absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 shadow-lg backdrop-blur-sm transition-transform duration-300 ${
+            pulse ? "scale-125" : "scale-100"
+          }`}
+        >
+          <FiHeart
+            className="text-red-500"
+            size={18}
+          />
+
           <span className="font-semibold text-gray-800">
             {product.likes ?? 0}
           </span>
@@ -78,8 +95,14 @@ export default function ProductCard({
 
         <p className="mt-3 text-sm text-gray-500">
           {product.type === "wanted"
-            ? `🔎 Шукає: ${product.sellerNickname ?? "Користувач"}`
-            : `👤 ${product.sellerNickname ?? "Користувач"}`}
+            ? `🔎 Шукає: ${
+                product.sellerNickname ??
+                "Користувач"
+              }`
+            : `👤 ${
+                product.sellerNickname ??
+                "Користувач"
+              }`}
         </p>
 
         {/* Ціна */}
@@ -88,7 +111,9 @@ export default function ProductCard({
             💰 Бюджет{" "}
             {product.negotiable
               ? "Договірна"
-              : `${Number(product.price).toLocaleString()} ₴`}
+              : `${Number(
+                  product.price
+                ).toLocaleString()} ₴`}
           </p>
         ) : product.type === "exchange" ? (
           <p className="mt-4 text-lg font-semibold text-indigo-600">
@@ -100,7 +125,9 @@ export default function ProductCard({
           </p>
         ) : (
           <p className="mt-4 text-2xl font-bold text-green-600">
-            {Number(product.price).toLocaleString()} ₴
+            {Number(
+              product.price
+            ).toLocaleString()} ₴
           </p>
         )}
 
@@ -114,6 +141,7 @@ export default function ProductCard({
           }`}
         >
           <FiHeart className="mr-2 inline" />
+
           {favorite
             ? "В обраному"
             : "Додати в обране"}
